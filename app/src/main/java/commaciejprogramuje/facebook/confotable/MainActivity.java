@@ -8,14 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -46,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        meetingsArr.add(new OneMeeting("Launching..." , "", "", "", "", ""));
+        meetingsArr.add(new OneMeeting("Launching...", "", "", "", "", ""));
         recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
 
         Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFile");
@@ -72,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private class RefreshFile extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+
             ParsePage refreshParsingPage = new ParsePage(new ParsePage.OnTaskCompletedListener() {
                 @Override
                 public void onTaskCompletedListener(ArrayList<OneMeeting> parsingResultArr) {
