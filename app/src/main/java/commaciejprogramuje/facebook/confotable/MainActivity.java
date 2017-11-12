@@ -6,25 +6,33 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     public static final String INPUT_FILE_URL = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
+    public static final long RESFRESH_TIME_MINUTES = 5;
 
     private RecyclerView recyclerView;
     private String getFilesDir;
     private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
     private RefreshFile refreshFile;
+
+    protected PowerManager.WakeLock mWakeLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +41,28 @@ public class MainActivity extends AppCompatActivity {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+
+        /*final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                PixelFormat.TRANSLUCENT);
+
+        WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+
+        ViewGroup mTopView = (ViewGroup) getLayoutInflater().inflate(R.layout.activity_main, null);
+        getWindow().setAttributes(params);
+        wm.addView(mTopView, params);*/
+
+        /* This code together with the one in onDestroy()
+         * will make the screen be always on until this Activity gets destroyed. */
+        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        assert pm != null;
+        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock.acquire();
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,10 +76,18 @@ public class MainActivity extends AppCompatActivity {
         meetingsArr.add(new OneMeeting("Launching...", "", "", "", "", ""));
         recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
 
+        Log.w("UWAGA", "start MainActivity");
+
+        setAlarm(this);
+    }
+
+    private static void setAlarm(Context context) {
         Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFile");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, alarmIntent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * 5, pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * RESFRESH_TIME_MINUTES, pendingIntent);
+
+        Log.w("UWAGA", "wywołanie alarmu: " + alarmManager);
     }
 
     @Override
@@ -62,8 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        this.mWakeLock.release();
         unregisterReceiver(refreshFile);
+
+        super.onDestroy();
     }
 
     private class RefreshFile extends BroadcastReceiver {
@@ -97,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_close) {
+            finish();
             return true;
         }
 
