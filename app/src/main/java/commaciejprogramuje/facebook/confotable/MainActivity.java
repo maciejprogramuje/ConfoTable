@@ -16,16 +16,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final String INPUT_FILE_URL = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
-    public static final long RESFRESH_TIME_MINUTES = 5;
+    public static final long RESFRESH_TIME_MINUTES = 2;
 
     private RecyclerView recyclerView;
     private String getFilesDir;
@@ -37,24 +43,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         setContentView(R.layout.activity_main);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-
-        /*final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-                PixelFormat.TRANSLUCENT);
-
-        WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-
-        ViewGroup mTopView = (ViewGroup) getLayoutInflater().inflate(R.layout.activity_main, null);
-        getWindow().setAttributes(params);
-        wm.addView(mTopView, params);*/
 
         /* This code together with the one in onDestroy()
          * will make the screen be always on until this Activity gets destroyed. */
@@ -81,6 +74,11 @@ public class MainActivity extends AppCompatActivity {
         setAlarm(this);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
+    }
+
     private static void setAlarm(Context context) {
         Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFile");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
@@ -89,6 +87,33 @@ public class MainActivity extends AppCompatActivity {
 
         Log.w("UWAGA", "wywołanie alarmu: " + alarmManager);
     }
+
+    @Override
+    public void onBackPressed() {
+        // nothing to do here
+        // … really
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(!hasFocus) {
+            // Close every kind of system dialog
+            Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+            sendBroadcast(closeDialog);
+        }
+    }
+
+    private final List blockedKeys = new ArrayList(Arrays.asList(KeyEvent.KEYCODE_VOLUME_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (blockedKeys.contains(event.getKeyCode())) {
+            return true;
+        } else {
+            return super.dispatchKeyEvent(event);
+        }
+    }
+
 
     @Override
     protected void onResume() {
