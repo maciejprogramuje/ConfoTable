@@ -90,6 +90,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        // nothing to do here
+        // … really
+    }
+
+    @Override
     protected void onDestroy() {
         this.mWakeLock.release();
         unregisterReceiver(refreshFile);
