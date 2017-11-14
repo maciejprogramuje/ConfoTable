@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.StrictMode;
@@ -16,22 +15,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final String INPUT_FILE_URL = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
     public static final long RESFRESH_TIME_MINUTES = 2;
+    public static final String MEETINGS_KEY = "meetings";
 
     private RecyclerView recyclerView;
     private String getFilesDir;
@@ -64,7 +56,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        meetingsArr.add(new OneMeeting("Launching...", "", "", "", "", ""));
+        if(savedInstanceState != null) {
+            meetingsArr = (ArrayList<OneMeeting>) savedInstanceState.getSerializable(MEETINGS_KEY);
+        } else {
+            meetingsArr.add(new OneMeeting("Launching...", "", "", "", "", ""));
+        }
         recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
 
         Log.w("UWAGA", "start MainActivity");
@@ -92,8 +88,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // nothing to do here
-        // … really
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (!hasFocus) {
+            Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+            sendBroadcast(closeDialog);
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -135,10 +141,22 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_close) {
+            Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFile");
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, alarmIntent, 0);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.cancel(pendingIntent);
+
             finish();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(MEETINGS_KEY, meetingsArr);
     }
 }

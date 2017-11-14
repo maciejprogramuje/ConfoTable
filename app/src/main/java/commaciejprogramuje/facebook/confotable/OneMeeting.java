@@ -2,11 +2,13 @@ package commaciejprogramuje.facebook.confotable;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
+
 /**
  * Created by m.szymczyk on 2017-11-08.
  */
 
-public class OneMeeting implements Comparable<OneMeeting> {
+public class OneMeeting implements Comparable<OneMeeting>, Serializable {
     private String summary;
     private String startDate;
     private String endDate;
