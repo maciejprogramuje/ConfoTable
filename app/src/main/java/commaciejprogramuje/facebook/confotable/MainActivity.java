@@ -3,11 +3,9 @@ package commaciejprogramuje.facebook.confotable;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.StrictMode;
@@ -30,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private String getFilesDir;
     private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
-    private RefreshFile refreshFile;
+    private RefreshFileReciever refreshFileReciever;
+    private BroadcastReceiver screenReceiver;
 
     protected PowerManager.WakeLock mWakeLock;
 
@@ -41,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        // register SCREEN RECEIVER
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        screenReceiver = new ScreenReceiver();
+        registerReceiver(screenReceiver, filter);
 
         /* This code together with the one in onDestroy()
          * will make the screen be always on until this Activity gets destroyed. */
@@ -68,10 +73,15 @@ public class MainActivity extends AppCompatActivity {
         Log.w("UWAGA", "start MainActivity");
 
         setAlarm(this);
+
+        // register refresh file RECEIVER
+        refreshFileReciever = new RefreshFileReciever();
+        IntentFilter filter2 = new IntentFilter("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
+        this.registerReceiver(refreshFileReciever, filter2);
     }
 
     private static void setAlarm(Context context) {
-        Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFile");
+        Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * RESFRESH_TIME_MINUTES, pendingIntent);
@@ -81,10 +91,27 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        // ONLY WHEN SCREEN TURNS ON
+        if (!ScreenReceiver.wasScreenOn) {
+            // THIS IS WHEN ONRESUME() IS CALLED DUE TO A SCREEN STATE CHANGE
+            Log.w("UWAGA","SCREEN TURNED ON");
+        } else {
+            // THIS IS WHEN ONRESUME() IS CALLED WHEN THE SCREEN STATE HAS NOT CHANGED
+        }
+
         super.onResume();
-        refreshFile = new RefreshFile();
-        IntentFilter filter = new IntentFilter("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFile");
-        this.registerReceiver(refreshFile, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        // WHEN THE SCREEN IS ABOUT TO TURN OFF
+        if (ScreenReceiver.wasScreenOn) {
+            // THIS IS THE CASE WHEN ONPAUSE() IS CALLED BY THE SYSTEM DUE TO A SCREEN STATE CHANGE
+            Log.w("UWAGA","SCREEN TURNED OFF");
+        } else {
+            // THIS IS WHEN ONPAUSE() IS CALLED WHEN THE SCREEN STATE HAS NOT CHANGED
+        }
+        super.onPause();
     }
 
     @Override
@@ -102,16 +129,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onDestroy() {
         this.mWakeLock.release();
-        unregisterReceiver(refreshFile);
+
+        unregisterReceiver(refreshFileReciever);
+        unregisterReceiver(screenReceiver);
 
         super.onDestroy();
     }
 
-    private class RefreshFile extends BroadcastReceiver {
+    private class RefreshFileReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -138,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_close) {
-            Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFile");
+            Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, alarmIntent, 0);
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             alarmManager.cancel(pendingIntent);
@@ -158,4 +186,37 @@ public class MainActivity extends AppCompatActivity {
 
         outState.putSerializable(MEETINGS_KEY, meetingsArr);
     }
+
+    /*@Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_POWER) {
+            Log.i("", "Dispath event power");
+            Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+            sendBroadcast(closeDialog);
+            return true;
+        }
+
+        return super.dispatchKeyEvent(event);
+    }*/
+
+    /*@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_POWER) {
+            // Do something here...
+            Log.w("UWAGA", "onKeyDown");
+            event.startTracking(); // Needed to track long presses
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_POWER) {
+            Log.w("UWAGA", "onKeyLongPress");
+            // Do something here...
+            return true;
+        }
+        return super.onKeyLongPress(keyCode, event);
+    }*/
 }

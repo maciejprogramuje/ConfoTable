@@ -26,8 +26,10 @@
 
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
+
             </intent-filter>
         </activity>
+
         <activity
             android:name=".FakeLauncherActivity"
             android:enabled="false">
@@ -38,6 +40,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".ScreenReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_OFF"/>
+                <action android:name="android.intent.action.SCREEN_ON"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
