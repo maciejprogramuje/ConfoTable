@@ -1,5 +1,6 @@
 package commaciejprogramuje.facebook.confotable;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // nothing to do here
+        // disable back button
     }
 
     @Override
@@ -96,6 +97,14 @@ public class MainActivity extends AppCompatActivity {
             Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
             sendBroadcast(closeDialog);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // disable recent apps button
+        ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        activityManager.moveTaskToFront(getTaskId(), 0);
     }
 
     @Override
@@ -123,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -138,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             alarmManager.cancel(pendingIntent);
 
-            //Utils.resetPreferredLauncherAndOpenChooser(this);
+            Utils.resetPreferredLauncherAndOpenChooser(this);
 
             finish();
             return true;
