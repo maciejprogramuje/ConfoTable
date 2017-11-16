@@ -69,9 +69,9 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
             BufferedReader br = new BufferedReader(new FileReader(resultFileName));
             String line;
             String tempSummary = "";
-            String tempDtStart = "";
+            String[] tempDtStart = new String[3];
             String tempDtStartToCal = "";
-            String tempDtEnd = "";
+            String[] tempDtEnd = new String[3];
             String tempDtEndToCal = "";
             String tempDtStamp = "";
             String tempTimeStart = "";

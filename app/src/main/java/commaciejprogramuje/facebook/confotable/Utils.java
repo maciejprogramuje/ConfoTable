@@ -31,14 +31,14 @@ public class Utils {
         return call;
     }
 
-    public static String splitDate(String tempDate) {
+    public static String[] splitDate(String tempDate) {
+        String[] tempArr = new String[3];
         if(tempDate.length() > 0) {
-            String y = tempDate.substring(0, 4);
-            String m = tempDate.substring(4, 6);
-            String d = tempDate.substring(6, 8);
-            return d + "/" + m + "/" + y;
+            tempArr[0] = tempDate.substring(0, 4);
+            tempArr[1] = tempDate.substring(4, 6);
+            tempArr[2] = tempDate.substring(6, 8);
         }
-        return  "";
+        return tempArr;
     }
 
     public static String splitTime(String tempTime) {

@@ -36,8 +36,8 @@ class MyAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         OneMeeting oneMeeting = meetings.get(position);
         ((MyViewHolder) holder).summaryTV.setText(oneMeeting.getSummary());
-        ((MyViewHolder) holder).dtStartTv.setText(oneMeeting.getStartDate());
-        ((MyViewHolder) holder).dtEndTv.setText(oneMeeting.getEndDate());
+        ((MyViewHolder) holder).dtStartTv.setText(String.format("%s/%s/%s", oneMeeting.getStartDate()[2], oneMeeting.getStartDate()[1], oneMeeting.getStartDate()[0]));
+        ((MyViewHolder) holder).dtEndTv.setText(String.format("%s/%s/%s", oneMeeting.getEndDate()[2], oneMeeting.getEndDate()[1], oneMeeting.getEndDate()[0]));
         ((MyViewHolder) holder).timeStartTv.setText(oneMeeting.getStartTime());
         ((MyViewHolder) holder).timeEndTv.setText(oneMeeting.getEndTime());
     }

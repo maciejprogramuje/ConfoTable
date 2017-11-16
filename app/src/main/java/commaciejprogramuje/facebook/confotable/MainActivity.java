@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         if(savedInstanceState != null) {
             meetingsArr = (ArrayList<OneMeeting>) savedInstanceState.getSerializable(MEETINGS_KEY);
         } else {
-            meetingsArr.add(new OneMeeting("Launching...", "", "", "", "", ""));
+            meetingsArr.add(new OneMeeting());
         }
         recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
 
