@@ -66,7 +66,7 @@ public class Utils {
     }
 
     public static void setScreenFullBright(Activity activity) {
-        float brightness = 50 / (float)255;
+        float brightness = 70 / (float)255;
         // set screen full bright
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         WindowManager.LayoutParams params = activity.getWindow().getAttributes();

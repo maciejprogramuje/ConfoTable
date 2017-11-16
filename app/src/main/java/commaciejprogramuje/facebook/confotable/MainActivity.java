@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.StrictMode;
@@ -16,15 +17,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String CONFERENCE_ROOM = "AKWARIUM";
     public static final String INPUT_FILE_URL = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
     public static final long RESFRESH_TIME_MINUTES = 2;
     public static final String MEETINGS_KEY = "meetings";
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        disableStatusBar();
+
         /* This code together with the one in onDestroy()
          * will make the screen be always on until this Activity gets destroyed. */
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         Utils.setScreenFullBright(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
         setSupportActionBar(toolbar);
 
         getFilesDir = getFilesDir().getAbsolutePath();
@@ -63,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             meetingsArr = (ArrayList<OneMeeting>) savedInstanceState.getSerializable(MEETINGS_KEY);
         } else {
             meetingsArr.add(new OneMeeting());
@@ -78,6 +83,23 @@ public class MainActivity extends AppCompatActivity {
         refreshFileReciever = new RefreshFileReciever();
         IntentFilter filter2 = new IntentFilter("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
         this.registerReceiver(refreshFileReciever, filter2);
+    }
+
+    private void disableStatusBar() {
+        WindowManager manager = ((WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE));
+        WindowManager.LayoutParams localLayoutParams = new WindowManager.LayoutParams();
+        localLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+        localLayoutParams.gravity = Gravity.TOP;
+        localLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                // this is to enable the notification to recieve touch events
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                // Draws over status bar
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+        localLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        localLayoutParams.height = (int) (50 * getResources().getDisplayMetrics().scaledDensity);
+        localLayoutParams.format = PixelFormat.TRANSPARENT;
+        CustomViewGroup view = new CustomViewGroup(this);
+        manager.addView(view, localLayoutParams);
     }
 
     private static void setAlarm(Context context) {
@@ -120,11 +142,22 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    public void changeLauncherOnClick(View view) {
+        Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, alarmIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+
+        Utils.resetPreferredLauncherAndOpenChooser(this);
+
+        finish();
+    }
+
     private class RefreshFileReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             Calendar calendar = Calendar.getInstance();
-            if(calendar.get(Calendar.HOUR_OF_DAY) > 22 && calendar.get(Calendar.HOUR_OF_DAY) < 7) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) > 22 && calendar.get(Calendar.HOUR_OF_DAY) < 7) {
                 Utils.setScreenHalfBright(MainActivity.this);
             } else {
                 Utils.setScreenFullBright(MainActivity.this);
@@ -142,34 +175,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_close) {
-            Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, alarmIntent, 0);
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarmManager.cancel(pendingIntent);
-
-            Utils.resetPreferredLauncherAndOpenChooser(this);
-
-            finish();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putSerializable(MEETINGS_KEY, meetingsArr);
     }
+
 }

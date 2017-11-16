@@ -22,4 +22,12 @@
 
     <include layout="@layout/content_main" />
 
+    <Button
+        android:id="@+id/change_launcher_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="change launcher"
+        android:layout_gravity="bottom|right"
+        android:onClick="changeLauncherOnClick"/>
+
 </android.support.design.widget.CoordinatorLayout>
