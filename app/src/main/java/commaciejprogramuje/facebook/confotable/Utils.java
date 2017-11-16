@@ -1,9 +1,11 @@
 package commaciejprogramuje.facebook.confotable;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.view.WindowManager;
 
 import java.util.Calendar;
 
@@ -61,5 +63,23 @@ public class Utils {
         context.startActivity(selector);
 
         packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
+    }
+
+    public static void setScreenFullBright(Activity activity) {
+        float brightness = 50 / (float)255;
+        // set screen full bright
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        WindowManager.LayoutParams params = activity.getWindow().getAttributes();
+        params.screenBrightness = brightness;
+        activity.getWindow().setAttributes(params);
+    }
+
+    public static void setScreenHalfBright(Activity activity) {
+        float brightness = 5 / (float)255;
+        // set screen full bright
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        WindowManager.LayoutParams params = activity.getWindow().getAttributes();
+        params.screenBrightness = brightness;
+        activity.getWindow().setAttributes(params);
     }
 }

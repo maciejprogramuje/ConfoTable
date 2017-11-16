@@ -19,8 +19,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     public static final String INPUT_FILE_URL = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
@@ -48,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
         assert pm != null;
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
+
+        // set screen full bright
+        Utils.setScreenFullBright(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -118,6 +123,12 @@ public class MainActivity extends AppCompatActivity {
     private class RefreshFileReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Calendar calendar = Calendar.getInstance();
+            if(calendar.get(Calendar.HOUR_OF_DAY) > 22 && calendar.get(Calendar.HOUR_OF_DAY) < 7) {
+                Utils.setScreenHalfBright(MainActivity.this);
+            } else {
+                Utils.setScreenFullBright(MainActivity.this);
+            }
 
             ParsePage refreshParsingPage = new ParsePage(new ParsePage.OnTaskCompletedListener() {
                 @Override
