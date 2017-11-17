@@ -5,12 +5,15 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.StrictMode;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,24 +21,38 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
+    // ------------------------------------------------------------
+    // ------------------------------------------------------------
+    // --------------------*** user options ***--------------------
+    // ------------------------------------------------------------
+    // ------------------------------------------------------------
     public static final String CONFERENCE_ROOM = "AKWARIUM";
     public static final String INPUT_FILE_URL = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
     public static final long RESFRESH_TIME_MINUTES = 2;
+    // ----------------------- from 0 to 255 ----------------------
+    public static final int FULL_BRIGHT_LEVEL = 230;
+    public static final int HALF_BRIGHT_LEVEL = 50;
+    // ------------------------------------------------------------
+    // ------------------------------------------------------------
+
     public static final String MEETINGS_KEY = "meetings";
 
     private RecyclerView recyclerView;
     private String getFilesDir;
     private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
     private RefreshFileReciever refreshFileReciever;
-
+    private Button changeLauncherButton;
     protected PowerManager.WakeLock mWakeLock;
 
     @Override
@@ -56,11 +73,15 @@ public class MainActivity extends AppCompatActivity {
         this.mWakeLock.acquire();
 
         // set screen full bright
+        //Utils.setScreenFullBright(this);
         Utils.setScreenFullBright(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
         setSupportActionBar(toolbar);
+
+        changeLauncherButton = findViewById(R.id.change_launcher_button);
+        changeLauncherButton.setBackgroundColor(Color.TRANSPARENT);
 
         getFilesDir = getFilesDir().getAbsolutePath();
 
@@ -143,24 +164,68 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void changeLauncherOnClick(View view) {
-        Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, alarmIntent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
+        final Context context = view.getContext();
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.admin_code, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setView(promptsView);
 
-        Utils.resetPreferredLauncherAndOpenChooser(this);
+        final EditText userInput = (EditText) promptsView.findViewById(R.id.code_input_edit_text);
 
-        finish();
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                if(userInput.getText().toString().equals("0000")){
+                                    Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
+                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
+                                    AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                                    alarmManager.cancel(pendingIntent);
+
+                                    Utils.resetPreferredLauncherAndOpenChooser(context);
+
+                                    finish();
+                                } else {
+                                    Toast.makeText(context, "Access denied!", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     private class RefreshFileReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             Calendar calendar = Calendar.getInstance();
-            if (calendar.get(Calendar.HOUR_OF_DAY) > 22 && calendar.get(Calendar.HOUR_OF_DAY) < 7) {
+            /*if (calendar.get(Calendar.HOUR_OF_DAY) > 22 && calendar.get(Calendar.HOUR_OF_DAY) < 7) {
                 Utils.setScreenHalfBright(MainActivity.this);
             } else {
                 Utils.setScreenFullBright(MainActivity.this);
+            }*/
+
+            if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
+                //Utils.setScreenHalfBright(MainActivity.this);
+                Utils.setScreenFullBright(MainActivity.this);
+            } else if (calendar.get(Calendar.MINUTE) >= 15 && calendar.get(Calendar.MINUTE) < 30) {
+                //Utils.setScreenFullBright(MainActivity.this);
+                Utils.setScreenHalfBright(MainActivity.this);
+            } else if (calendar.get(Calendar.MINUTE) >= 30 && calendar.get(Calendar.MINUTE) < 45) {
+                //Utils.setScreenFullBright(MainActivity.this);
+                Utils.setScreenFullBright(MainActivity.this);
+            } else {
+                //Utils.setScreenFullBright(MainActivity.this);
+                Utils.setScreenHalfBright(MainActivity.this);
             }
 
             ParsePage refreshParsingPage = new ParsePage(new ParsePage.OnTaskCompletedListener() {

@@ -5,9 +5,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.util.Log;
 import android.view.WindowManager;
 
 import java.util.Calendar;
+
+import static commaciejprogramuje.facebook.confotable.MainActivity.FULL_BRIGHT_LEVEL;
+import static commaciejprogramuje.facebook.confotable.MainActivity.HALF_BRIGHT_LEVEL;
 
 /**
  * Created by m.szymczyk on 2017-11-08.
@@ -35,7 +40,7 @@ public class Utils {
 
     public static String[] splitDate(String tempDate) {
         String[] tempArr = new String[3];
-        if(tempDate.length() > 0) {
+        if (tempDate.length() > 0) {
             tempArr[0] = tempDate.substring(0, 4);
             tempArr[1] = tempDate.substring(4, 6);
             tempArr[2] = tempDate.substring(6, 8);
@@ -44,7 +49,7 @@ public class Utils {
     }
 
     public static String splitTime(String tempTime) {
-        if(tempTime.length() > 0) {
+        if (tempTime.length() > 0) {
             String h = tempTime.substring(0, 2);
             String mm = tempTime.substring(2, 4);
             return h + ":" + mm;
@@ -66,20 +71,34 @@ public class Utils {
     }
 
     public static void setScreenFullBright(Activity activity) {
-        float brightness = 70 / (float)255;
-        // set screen full bright
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-        params.screenBrightness = brightness;
-        activity.getWindow().setAttributes(params);
+        setBrightness(activity, FULL_BRIGHT_LEVEL);
     }
 
     public static void setScreenHalfBright(Activity activity) {
-        float brightness = 5 / (float)255;
-        // set screen full bright
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-        params.screenBrightness = brightness;
-        activity.getWindow().setAttributes(params);
+        setBrightness(activity, HALF_BRIGHT_LEVEL);
+    }
+
+    private static void setBrightness(Activity activity, int brightness) {
+        if(Build.VERSION.SDK_INT >= 21) {
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            WindowManager.LayoutParams params = activity.getWindow().getAttributes();
+            params.screenBrightness = brightness / (float) 255;
+            activity.getWindow().setAttributes(params);
+        } else {
+            try {
+                android.provider.Settings.System.putInt(
+                        activity.getContentResolver(),
+                        android.provider.Settings.System.SCREEN_BRIGHTNESS, brightness);
+                android.provider.Settings.System.putInt(activity.getContentResolver(),
+                        android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE,
+                        android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+                android.provider.Settings.System.putInt(
+                        activity.getContentResolver(),
+                        android.provider.Settings.System.SCREEN_BRIGHTNESS,
+                        brightness);
+            } catch (Exception e) {
+                Log.e("Screen Brightness", "error changing screen brightness");
+            }
+        }
     }
 }
