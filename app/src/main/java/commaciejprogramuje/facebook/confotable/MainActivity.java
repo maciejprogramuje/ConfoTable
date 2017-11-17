@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     public static final long RESFRESH_TIME_MINUTES = 2;
     public static final String ADMIN_CODE = "0000";
     // ----------------------- from 0 to 255 ----------------------
-    public static final int FULL_BRIGHT_LEVEL = 230;
-    public static final int HALF_BRIGHT_LEVEL = 50;
+    public static final int FULL_BRIGHT_LEVEL = 170;
+    public static final int HALF_BRIGHT_LEVEL = 7;
     // ------------------------------------------------------------
     // ------------------------------------------------------------
 
