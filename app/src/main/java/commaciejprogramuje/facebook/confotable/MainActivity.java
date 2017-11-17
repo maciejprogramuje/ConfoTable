@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String CONFERENCE_ROOM = "AKWARIUM";
     public static final String INPUT_FILE_URL = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
     public static final long RESFRESH_TIME_MINUTES = 2;
+    public static final String ADMIN_CODE = "0000";
     // ----------------------- from 0 to 255 ----------------------
     public static final int FULL_BRIGHT_LEVEL = 230;
     public static final int HALF_BRIGHT_LEVEL = 50;
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                if(userInput.getText().toString().equals("0000")){
+                                if(userInput.getText().toString().equals(ADMIN_CODE)){
                                     Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
                                     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -208,23 +209,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Calendar calendar = Calendar.getInstance();
-            /*if (calendar.get(Calendar.HOUR_OF_DAY) > 22 && calendar.get(Calendar.HOUR_OF_DAY) < 7) {
+            /*if (calendar.get(Calendar.HOUR_OF_DAY) > 19 && calendar.get(Calendar.HOUR_OF_DAY) < 7) {
                 Utils.setScreenHalfBright(MainActivity.this);
             } else {
                 Utils.setScreenFullBright(MainActivity.this);
             }*/
 
             if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
-                //Utils.setScreenHalfBright(MainActivity.this);
                 Utils.setScreenFullBright(MainActivity.this);
             } else if (calendar.get(Calendar.MINUTE) >= 15 && calendar.get(Calendar.MINUTE) < 30) {
-                //Utils.setScreenFullBright(MainActivity.this);
                 Utils.setScreenHalfBright(MainActivity.this);
             } else if (calendar.get(Calendar.MINUTE) >= 30 && calendar.get(Calendar.MINUTE) < 45) {
-                //Utils.setScreenFullBright(MainActivity.this);
                 Utils.setScreenFullBright(MainActivity.this);
             } else {
-                //Utils.setScreenFullBright(MainActivity.this);
                 Utils.setScreenHalfBright(MainActivity.this);
             }
 
