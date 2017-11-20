@@ -1,6 +1,7 @@
 package commaciejprogramuje.facebook.confotable;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.Serializable;
 
@@ -10,41 +11,59 @@ import java.io.Serializable;
 
 public class OneMeeting implements Comparable<OneMeeting>, Serializable {
     private String summary;
-    private String[] startDate = new String[3];
-    private String[] endDate = new String[3];
+    private String[] startDateArr = new String[3];
+    private String[] endDateArr = new String[3];
+    private String startDate;
+    private String endDate;
     private String startTime;
     private String endTime;
     private String reservationDate;
+    private String onlyStartDate;
+    private String onlyEndDate;
+    private String onlyStartTime;
+    private String onlyEndTime;
 
     public OneMeeting() {
         summary = "Launching...";
-        startDate[0] = "";
-        startDate[1] = "";
-        startDate[2] = "";
-        endDate[0] = "";
-        endDate[1] = "";
-        endDate[2] = "";
         startTime = "";
         endTime = "";
         reservationDate = "";
     }
 
-    public OneMeeting(String summary, String[] startDate, String[] endDate, String startTime, String endTime, String reservationDate) {
+    public OneMeeting(String summary, String startDate, String endDate, String reservationDate) {
         this.summary = summary;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
         this.reservationDate = reservationDate;
+
+        startDateArr = Utils.splitDate(startDate);
+        endDateArr = Utils.splitDate(endDate);
+
+        if (startDate.length() > 9) {
+            startTime = startDate.substring(9, 13);
+        } else {
+            startTime = "0000";
+        }
+        onlyStartTime = startTime.substring(0, 2) + ":" + startTime.substring(2);
+
+        if (endDate.length() > 9) {
+            endTime = endDate.substring(9, 13);
+        } else {
+            endTime = "2359";
+        }
+        onlyEndTime = endTime.substring(0, 2) + ":" + endTime.substring(2);
+
+        onlyStartDate = startDateArr[2] + "/" + startDateArr[1] + "/" + startDateArr[0];
+        onlyEndDate = endDateArr[2] + "/" + endDateArr[1] + "/" + endDateArr[0];
     }
 
     @Override
     public int compareTo(@NonNull OneMeeting oneMeeting) {
-        int dateYearComparator = startDate[0].compareTo(oneMeeting.startDate[0]);
+        int dateYearComparator = startDateArr[0].compareTo(oneMeeting.startDateArr[0]);
         if (dateYearComparator == 0) {
-            int dateMonthComparator = startDate[1].compareTo(oneMeeting.startDate[1]);
+            int dateMonthComparator = startDateArr[1].compareTo(oneMeeting.startDateArr[1]);
             if(dateMonthComparator == 0) {
-                int dateDayComparator = startDate[2].compareTo(oneMeeting.startDate[2]);
+                int dateDayComparator = startDateArr[2].compareTo(oneMeeting.startDateArr[2]);
                 if(dateDayComparator == 0) {
                     return startTime.compareTo(oneMeeting.startTime);
                 } else return dateDayComparator;
@@ -84,19 +103,67 @@ public class OneMeeting implements Comparable<OneMeeting>, Serializable {
         this.endTime = endTime;
     }
 
-    public String[] getStartDate() {
+    public String[] getStartDateArr() {
+        return startDateArr;
+    }
+
+    public void setStartDateArr(String[] startDateArr) {
+        this.startDateArr = startDateArr;
+    }
+
+    public String[] getEndDateArr() {
+        return endDateArr;
+    }
+
+    public void setEndDateArr(String[] endDateArr) {
+        this.endDateArr = endDateArr;
+    }
+
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String[] startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public String[] getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String[] endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public String getOnlyStartDate() {
+        return onlyStartDate;
+    }
+
+    public void setOnlyStartDate(String onlyStartDate) {
+        this.onlyStartDate = onlyStartDate;
+    }
+
+    public String getOnlyEndDate() {
+        return onlyEndDate;
+    }
+
+    public void setOnlyEndDate(String onlyEndDate) {
+        this.onlyEndDate = onlyEndDate;
+    }
+
+    public String getOnlyStartTime() {
+        return onlyStartTime;
+    }
+
+    public void setOnlyStartTime(String onlyStartTime) {
+        this.onlyStartTime = onlyStartTime;
+    }
+
+    public String getOnlyEndTime() {
+        return onlyEndTime;
+    }
+
+    public void setOnlyEndTime(String onlyEndTime) {
+        this.onlyEndTime = onlyEndTime;
     }
 }
