@@ -68,14 +68,27 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
                     int tYear = Integer.valueOf(tEndDate.substring(0, 4));
                     int tMonth = Integer.valueOf(tEndDate.substring(4, 6));
                     int tDay = Integer.valueOf(tEndDate.substring(6, 8));
-
-                    if (tYear >= actualCalendar.get(Calendar.YEAR)
-                            && tMonth >= (actualCalendar.get(Calendar.MONTH) + 1)
-                            && tDay >= actualCalendar.get(Calendar.DAY_OF_MONTH)) {
-                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
-                        Collections.sort(tempArr);
+                    int tHour = 0;
+                    int tMinutes = 0;
+                    if (tEndDate.length() > 9) {
+                        tHour = Integer.valueOf(tEndDate.substring(9, 11));
+                        tMinutes = Integer.valueOf(tEndDate.substring(11, 13));
                     }
 
+                    Log.w("UWAGA", tYear + "/" + tMonth + "/" + tDay + ", " + tHour + ":" + tMinutes);
+
+                    if (tYear > actualCalendar.get(Calendar.YEAR)) {
+                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
+                    } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth > (actualCalendar.get(Calendar.MONTH) + 1)) {
+                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
+                    } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth == (actualCalendar.get(Calendar.MONTH) + 1) && tDay > actualCalendar.get(Calendar.DAY_OF_MONTH)) {
+                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
+                    } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth == (actualCalendar.get(Calendar.MONTH) + 1) && tDay == actualCalendar.get(Calendar.DAY_OF_MONTH) && tHour > actualCalendar.get(Calendar.HOUR_OF_DAY)) {
+                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
+                    } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth == (actualCalendar.get(Calendar.MONTH) + 1) && tDay == actualCalendar.get(Calendar.DAY_OF_MONTH) && tHour == actualCalendar.get(Calendar.HOUR_OF_DAY) && tMinutes > actualCalendar.get(Calendar.MINUTE)) {
+                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
+                    }
+                    Collections.sort(tempArr);
                 }
             }
 
