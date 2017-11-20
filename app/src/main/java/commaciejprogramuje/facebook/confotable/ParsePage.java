@@ -33,7 +33,6 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
         Log.w("UWAGA", "parsuję...");
 
         ArrayList<OneMeeting> tempArr = new ArrayList<>();
-        Calendar actualCalendar = Calendar.getInstance();
 
         InputStream is = null;
         try {
@@ -65,34 +64,12 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
                         }
                     }
 
-                    int tYear = Integer.valueOf(tEndDate.substring(0, 4));
-                    int tMonth = Integer.valueOf(tEndDate.substring(4, 6));
-                    int tDay = Integer.valueOf(tEndDate.substring(6, 8));
-                    int tHour = 0;
-                    int tMinutes = 0;
-                    if (tEndDate.length() > 9) {
-                        tHour = Integer.valueOf(tEndDate.substring(9, 11));
-                        tMinutes = Integer.valueOf(tEndDate.substring(11, 13));
-                    }
-
-                    Log.w("UWAGA", tYear + "/" + tMonth + "/" + tDay + ", " + tHour + ":" + tMinutes);
-
-                    if (tYear > actualCalendar.get(Calendar.YEAR)) {
-                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
-                    } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth > (actualCalendar.get(Calendar.MONTH) + 1)) {
-                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
-                    } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth == (actualCalendar.get(Calendar.MONTH) + 1) && tDay > actualCalendar.get(Calendar.DAY_OF_MONTH)) {
-                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
-                    } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth == (actualCalendar.get(Calendar.MONTH) + 1) && tDay == actualCalendar.get(Calendar.DAY_OF_MONTH) && tHour > actualCalendar.get(Calendar.HOUR_OF_DAY)) {
-                        tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
-                    } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth == (actualCalendar.get(Calendar.MONTH) + 1) && tDay == actualCalendar.get(Calendar.DAY_OF_MONTH) && tHour == actualCalendar.get(Calendar.HOUR_OF_DAY) && tMinutes > actualCalendar.get(Calendar.MINUTE)) {
+                    if(isAfterCurrentDateAndTime(tEndDate)) {
                         tempArr.add(new OneMeeting(tSummary, tStartDate, tEndDate, ""));
                     }
                     Collections.sort(tempArr);
                 }
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParserException e) {
@@ -108,59 +85,33 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
         Log.w("UWAGA", "koniec parsowania");
 
         return tempArr;
+    }
 
+    private boolean isAfterCurrentDateAndTime(String s) {
+        int tYear = Integer.valueOf(s.substring(0, 4));
+        int tMonth = Integer.valueOf(s.substring(4, 6));
+        int tDay = Integer.valueOf(s.substring(6, 8));
+        int tHour = 0;
+        int tMinutes = 0;
+        if (s.length() > 9) {
+            tHour = Integer.valueOf(s.substring(9, 11));
+            tMinutes = Integer.valueOf(s.substring(11, 13));
+        }
 
-        /*
-        ArrayList<OneMeeting> tempArr = new ArrayList<>();
         Calendar actualCalendar = Calendar.getInstance();
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(resultFileName));
-            String line;
-            String tempSummary = "";
-            String[] tempDtStart = new String[3];
-            String tempDtStartToCal = "";
-            String[] tempDtEnd = new String[3];
-            String tempDtStamp = "";
-            String tempTimeStart = "";
-            String tempTimeEnd = "";
-            while ((line = br.readLine()) != null) {
-                if (line.contains("SUMMARY")) {
-                    tempSummary = line.replace("SUMMARY:", "");
-                } else if (line.contains("DTSTART")) {
-                    tempDtStartToCal = line.substring(line.indexOf(":") + 1, line.indexOf(":") + 9);
-                    tempDtStart = Utils.splitDate(tempDtStartToCal);
-                    if (line.length() > 10) {
-                        tempTimeStart = line.substring(line.indexOf(":") + 9).replace("T", "");
-                        tempTimeStart = Utils.splitTime(tempTimeStart);
-                    } else {
-                        tempTimeStart = "00:00";
-                    }
-                } else if (line.contains("DTEND")) {
-                    if (line.length() > 10) {
-                        tempDtEnd = Utils.splitDate(line.substring(line.indexOf(":") + 1, line.indexOf(":") + 9));
-                        tempTimeEnd = line.substring(line.indexOf(":") + 9).replace("T", "");
-                        tempTimeEnd = Utils.splitTime(tempTimeEnd);
-                    } else {
-                        tempDtEnd = Utils.splitDate(line.substring(line.indexOf(":") + 1));
-                        tempTimeEnd = "23:59";
-                    }
-                } else if (line.contains("DTSTAMP")) {
-                    tempDtStamp = line.substring(line.indexOf(":") + 1);
-                } else if (line.contains("END:VEVENT")) {
-                    if (Integer.valueOf(tempDtEnd[0]) >= actualCalendar.get(Calendar.YEAR)
-                            && Integer.valueOf(tempDtEnd[1]) >= (actualCalendar.get(Calendar.MONTH) + 1)
-                            && Integer.valueOf(tempDtEnd[2]) >= actualCalendar.get(Calendar.DAY_OF_MONTH)) {
-                        Log.w("UWAGA", "----------------------- OK! " + line);
-                        tempArr.add(new OneMeeting(tempSummary, tempDtStart, tempDtEnd, tempTimeStart, tempTimeEnd, tempDtStamp));
-                        Collections.sort(tempArr);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (tYear > actualCalendar.get(Calendar.YEAR)) {
+            return true;
+        } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth > (actualCalendar.get(Calendar.MONTH) + 1)) {
+            return true;
+        } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth == (actualCalendar.get(Calendar.MONTH) + 1) && tDay > actualCalendar.get(Calendar.DAY_OF_MONTH)) {
+            return true;
+        } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth == (actualCalendar.get(Calendar.MONTH) + 1) && tDay == actualCalendar.get(Calendar.DAY_OF_MONTH) && tHour > actualCalendar.get(Calendar.HOUR_OF_DAY)) {
+            return true;
+        } else if (tYear == actualCalendar.get(Calendar.YEAR) && tMonth == (actualCalendar.get(Calendar.MONTH) + 1) && tDay == actualCalendar.get(Calendar.DAY_OF_MONTH) && tHour == actualCalendar.get(Calendar.HOUR_OF_DAY) && tMinutes > actualCalendar.get(Calendar.MINUTE)) {
+            return true;
         }
-        return tempArr;*/
+        return false;
     }
 
     @Override
