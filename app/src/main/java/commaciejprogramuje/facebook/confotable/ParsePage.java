@@ -9,19 +9,16 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PeriodList;
-import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
-import static commaciejprogramuje.facebook.confotable.MainActivity.INPUT_FILE_URL;
+import static commaciejprogramuje.facebook.confotable.MainActivity.inputFileUrl;
 
 /**
  * Created by m.szymczyk on 2017-11-08.
@@ -51,7 +48,7 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
         String tStartDate = "";
         String tEndDate = "";
         try {
-            InputStream is = new URL(INPUT_FILE_URL).openStream();
+            InputStream is = new URL(inputFileUrl).openStream();
             cal = new CalendarBuilder().build(is);
             period = new Period(new DateTime(today.getTime()), new DateTime(monthAfterToday.getTime()));
         } catch (IOException e) {

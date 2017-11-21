@@ -28,6 +28,6 @@
         android:layout_height="40dp"
         android:layout_gravity="bottom|left"
         android:text="kod: 0000"
-        android:onClick="changeLauncherOnClick"/>
+        android:onClick="hiddenButtonOnClick"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     // ------------------------------------------------------------
     // ------------------------------------------------------------
     public static final String CONFERENCE_ROOM = "AKWARIUM";
-    public static final String INPUT_FILE_URL = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
+    //public static final String inputFileUrl = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
+    public static String inputFileUrl;
     public static final long RESFRESH_TIME_MINUTES = 2;
     public static final String ADMIN_CODE = "0000";
     // ----------------------- from 0 to 255 ----------------------
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private String getFilesDir;
     private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
     private RefreshFileReciever refreshFileReciever;
-    private Button changeLauncherButton;
+    private Button hiddenButton;
     protected PowerManager.WakeLock mWakeLock;
 
     @Override
@@ -63,6 +64,18 @@ public class MainActivity extends AppCompatActivity {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        Intent incomingIntent = getIntent();
+        if(incomingIntent != null) {
+            inputFileUrl = incomingIntent.getStringExtra(SettingsActivity.URL_STRING_KEY);
+        }
+
+        if (savedInstanceState == null) {
+            hiddenButton.performClick();
+        } else {
+            inputFileUrl = savedInstanceState.getString(MEETINGS_KEY);
+        }
+
 
         disableStatusBar();
 
@@ -81,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
         setSupportActionBar(toolbar);
 
-        changeLauncherButton = findViewById(R.id.change_launcher_button);
-        changeLauncherButton.setBackgroundColor(Color.TRANSPARENT);
+        hiddenButton = findViewById(R.id.change_launcher_button);
+        hiddenButton.setBackgroundColor(Color.TRANSPARENT);
 
         getFilesDir = getFilesDir().getAbsolutePath();
 
@@ -90,11 +103,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        if (savedInstanceState != null) {
-            meetingsArr = (ArrayList<OneMeeting>) savedInstanceState.getSerializable(MEETINGS_KEY);
-        } else {
-            meetingsArr.add(new OneMeeting());
-        }
+        meetingsArr.add(new OneMeeting());
         recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
 
         Log.w("UWAGA", "start MainActivity");
@@ -164,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void changeLauncherOnClick(View view) {
+    public void hiddenButtonOnClick(View view) {
         final Context context = view.getContext();
         // get prompts.xml view
         LayoutInflater li = LayoutInflater.from(context);
@@ -181,14 +190,17 @@ public class MainActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
                                 if(userInput.getText().toString().equals(ADMIN_CODE)){
-                                    Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
+                                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                                    startActivity(intent);
+
+                                    /*Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
                                     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                                     alarmManager.cancel(pendingIntent);
 
                                     Utils.resetPreferredLauncherAndOpenChooser(context);
 
-                                    finish();
+                                    finish();*/
                                 } else {
                                     Toast.makeText(context, "Access denied!", Toast.LENGTH_LONG).show();
                                 }
@@ -240,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putSerializable(MEETINGS_KEY, meetingsArr);
+        outState.putString(MEETINGS_KEY, inputFileUrl);
     }
 
 }
