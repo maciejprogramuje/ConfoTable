@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     // ------------------------------------------------------------
     // ------------------------------------------------------------
     public static final String CONFERENCE_ROOM = "AKWARIUM";
-    // "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
+    private static final String INPUT_FILE_URL = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
     public static final long RESFRESH_TIME_MINUTES = 2;
     public static final String ADMIN_CODE = "0000";
     // ----------------------- from 0 to 255 ----------------------
@@ -47,14 +48,11 @@ public class MainActivity extends AppCompatActivity {
     // ------------------------------------------------------------
     // ------------------------------------------------------------
 
-    public static final String MEETINGS_KEY = "meetings";
-
     private RecyclerView recyclerView;
     private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
     private RefreshFileReciever refreshFileReciever;
     private Button hiddenButton;
     protected PowerManager.WakeLock mWakeLock;
-    private String inputFileUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +65,6 @@ public class MainActivity extends AppCompatActivity {
         hiddenButton = findViewById(R.id.change_launcher_button);
         hiddenButton.setBackgroundColor(Color.TRANSPARENT);
 
-        Intent incomingIntent = getIntent();
-
-        if (incomingIntent != null) {
-            inputFileUrl = incomingIntent.getStringExtra(SettingsActivity.URL_STRING_KEY);
-        } else if (savedInstanceState != null) {
-            inputFileUrl = savedInstanceState.getString(MEETINGS_KEY);
-        }
-
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -83,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
 
         Log.w("UWAGA", "start MainActivity");
-        Log.w("UWAGA", "inputFileUrl: "+inputFileUrl);
 
         // register refresh file RECEIVER
         refreshFileReciever = new RefreshFileReciever();
@@ -97,22 +86,18 @@ public class MainActivity extends AppCompatActivity {
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
 
-        if (inputFileUrl != null) {
-            disableStatusBar();
+        disableStatusBar();
 
-            // set screen full bright
-            Utils.setScreenFullBright(this);
+        // set screen full bright
+        Utils.setScreenFullBright(this);
 
-            Log.w("UWAGA", "summary: "+meetingsArr.get(0).getSummary());
+        Log.w("UWAGA", "summary: " + meetingsArr.get(0).getSummary());
 
-            if(!meetingsArr.get(0).getSummary().equals(ParsePage.WRONG_URL_MESSAGE)) {
-                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-                toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
-                setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
+        setSupportActionBar(toolbar);
 
-                setAlarm(this);
-            }
-        }
+        setAlarm(this);
     }
 
     private void disableStatusBar() {
@@ -160,11 +145,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        if(inputFileUrl != null) {
-            // disable recent apps button
-            ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-            activityManager.moveTaskToFront(getTaskId(), 0);
-        }
+        // disable recent apps button
+        ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        activityManager.moveTaskToFront(getTaskId(), 0);
     }
 
     @Override
@@ -192,19 +175,14 @@ public class MainActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 if (userInput.getText().toString().equals(ADMIN_CODE)) {
-                                    Log.w("UWAGA", "nowe ustawienia");
-                                    MainActivity.this.finish();
-                                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                                    startActivity(intent);
-
-                                    /*Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
+                                    Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
                                     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                                    Log.w("UWAGA", "usunięcie alarmu alarmu: " + alarmManager);
                                     alarmManager.cancel(pendingIntent);
 
-                                    Utils.resetPreferredLauncherAndOpenChooser(context);
-
-                                    finish();*/
+                                    Utils.resetPreferredLauncherAndOpenChooser(MainActivity.this);
+                                    finish();
                                 } else {
                                     Toast.makeText(context, "Access denied!", Toast.LENGTH_LONG).show();
                                 }
@@ -248,15 +226,7 @@ public class MainActivity extends AppCompatActivity {
                     recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
                 }
             });
-            refreshParsingPage.execute(inputFileUrl);
+            refreshParsingPage.execute(INPUT_FILE_URL);
         }
     }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putString(MEETINGS_KEY, inputFileUrl);
-    }
-
 }
