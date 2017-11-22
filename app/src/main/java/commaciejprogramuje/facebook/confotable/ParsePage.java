@@ -24,7 +24,7 @@ import java.util.Collections;
  */
 
 public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
-    public static final String WRONG_URL_MESSAGE = "Wrong url/path used for ics calendar file";
+    public static final String WRONG_URL_MESSAGE = "Wrong url/path for ics calendar file\nor\nno internet connection!";
     public OnTaskCompletedListener listener = null;
 
     public ParsePage(OnTaskCompletedListener listener) {
