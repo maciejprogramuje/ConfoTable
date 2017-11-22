@@ -208,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
                 Utils.setScreenFullBright(MainActivity.this);
             }*/
 
+
+
             if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
                 Utils.setScreenFullBright(MainActivity.this);
             } else if (calendar.get(Calendar.MINUTE) >= 15 && calendar.get(Calendar.MINUTE) < 30) {
