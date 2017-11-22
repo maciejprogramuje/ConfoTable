@@ -178,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
                                     Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
                                     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                                    Log.w("UWAGA", "usunięcie alarmu alarmu: " + alarmManager);
                                     alarmManager.cancel(pendingIntent);
 
                                     Utils.resetPreferredLauncherAndOpenChooser(MainActivity.this);
