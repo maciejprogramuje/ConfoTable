@@ -18,7 +18,7 @@
         android:hint="https://"/>
 
     <Button
-        android:id="@+id/saveSettingsButton"
+        android:id="@+id/save_settings_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Save and exit"

@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
-import static commaciejprogramuje.facebook.confotable.MainActivity.inputFileUrl;
 
 /**
  * Created by m.szymczyk on 2017-11-08.
  */
 
 public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
+    public static final String WRONG_URL_MESSAGE = "Wrong url/path used for ics calendar file";
     public OnTaskCompletedListener listener = null;
 
     public ParsePage(OnTaskCompletedListener listener) {
@@ -48,13 +48,17 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
         String tStartDate = "";
         String tEndDate = "";
         try {
-            InputStream is = new URL(inputFileUrl).openStream();
+            InputStream is = new URL(strings[0]).openStream();
             cal = new CalendarBuilder().build(is);
             period = new Period(new DateTime(today.getTime()), new DateTime(monthAfterToday.getTime()));
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.w("UWAGA", "MyErr 1");
+            tempArr.add(new OneMeeting(WRONG_URL_MESSAGE));
+            return tempArr;
         } catch (ParserException e) {
-            e.printStackTrace();
+            Log.w("UWAGA", "MyErr 2");
+            tempArr.add(new OneMeeting(WRONG_URL_MESSAGE));
+            return tempArr;
         }
 
         for (Object o : cal.getComponents("VEVENT")) {

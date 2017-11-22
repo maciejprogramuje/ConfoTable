@@ -23,8 +23,8 @@ public class OneMeeting implements Comparable<OneMeeting>, Serializable {
     private String onlyStartTime;
     private String onlyEndTime;
 
-    public OneMeeting() {
-        summary = "Launching...";
+    public OneMeeting(String message) {
+        summary = message;
         startTime = "";
         endTime = "";
         reservationDate = "";

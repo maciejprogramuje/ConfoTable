@@ -38,8 +38,7 @@ public class MainActivity extends AppCompatActivity {
     // ------------------------------------------------------------
     // ------------------------------------------------------------
     public static final String CONFERENCE_ROOM = "AKWARIUM";
-    //public static final String inputFileUrl = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
-    public static String inputFileUrl;
+    // "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
     public static final long RESFRESH_TIME_MINUTES = 2;
     public static final String ADMIN_CODE = "0000";
     // ----------------------- from 0 to 255 ----------------------
@@ -51,11 +50,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String MEETINGS_KEY = "meetings";
 
     private RecyclerView recyclerView;
-    private String getFilesDir;
     private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
     private RefreshFileReciever refreshFileReciever;
     private Button hiddenButton;
     protected PowerManager.WakeLock mWakeLock;
+    private String inputFileUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,19 +64,31 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        Intent incomingIntent = getIntent();
-        if(incomingIntent != null) {
-            inputFileUrl = incomingIntent.getStringExtra(SettingsActivity.URL_STRING_KEY);
-        }
+        hiddenButton = findViewById(R.id.change_launcher_button);
+        hiddenButton.setBackgroundColor(Color.TRANSPARENT);
 
-        if (savedInstanceState == null) {
-            hiddenButton.performClick();
-        } else {
+        Intent incomingIntent = getIntent();
+
+        if (incomingIntent != null) {
+            inputFileUrl = incomingIntent.getStringExtra(SettingsActivity.URL_STRING_KEY);
+        } else if (savedInstanceState != null) {
             inputFileUrl = savedInstanceState.getString(MEETINGS_KEY);
         }
 
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        disableStatusBar();
+        meetingsArr.add(new OneMeeting("Launching..."));
+        recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
+
+        Log.w("UWAGA", "start MainActivity");
+        Log.w("UWAGA", "inputFileUrl: "+inputFileUrl);
+
+        // register refresh file RECEIVER
+        refreshFileReciever = new RefreshFileReciever();
+        IntentFilter filter2 = new IntentFilter("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
+        this.registerReceiver(refreshFileReciever, filter2);
 
         /* This code together with the one in onDestroy()
          * will make the screen be always on until this Activity gets destroyed. */
@@ -86,34 +97,22 @@ public class MainActivity extends AppCompatActivity {
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
 
-        // set screen full bright
-        //Utils.setScreenFullBright(this);
-        Utils.setScreenFullBright(this);
+        if (inputFileUrl != null) {
+            disableStatusBar();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
-        setSupportActionBar(toolbar);
+            // set screen full bright
+            Utils.setScreenFullBright(this);
 
-        hiddenButton = findViewById(R.id.change_launcher_button);
-        hiddenButton.setBackgroundColor(Color.TRANSPARENT);
+            Log.w("UWAGA", "summary: "+meetingsArr.get(0).getSummary());
 
-        getFilesDir = getFilesDir().getAbsolutePath();
+            if(!meetingsArr.get(0).getSummary().equals(ParsePage.WRONG_URL_MESSAGE)) {
+                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
+                setSupportActionBar(toolbar);
 
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        meetingsArr.add(new OneMeeting());
-        recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
-
-        Log.w("UWAGA", "start MainActivity");
-
-        setAlarm(this);
-
-        // register refresh file RECEIVER
-        refreshFileReciever = new RefreshFileReciever();
-        IntentFilter filter2 = new IntentFilter("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
-        this.registerReceiver(refreshFileReciever, filter2);
+                setAlarm(this);
+            }
+        }
     }
 
     private void disableStatusBar() {
@@ -160,9 +159,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // disable recent apps button
-        ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-        activityManager.moveTaskToFront(getTaskId(), 0);
+
+        if(inputFileUrl != null) {
+            // disable recent apps button
+            ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+            activityManager.moveTaskToFront(getTaskId(), 0);
+        }
     }
 
     @Override
@@ -188,8 +190,10 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                if(userInput.getText().toString().equals(ADMIN_CODE)){
+                            public void onClick(DialogInterface dialog, int id) {
+                                if (userInput.getText().toString().equals(ADMIN_CODE)) {
+                                    Log.w("UWAGA", "nowe ustawienia");
+                                    MainActivity.this.finish();
                                     Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                                     startActivity(intent);
 
@@ -244,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                     recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
                 }
             });
-            refreshParsingPage.execute(getFilesDir);
+            refreshParsingPage.execute(inputFileUrl);
         }
     }
 
