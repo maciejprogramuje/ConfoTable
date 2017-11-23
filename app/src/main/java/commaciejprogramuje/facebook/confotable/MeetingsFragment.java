@@ -70,6 +70,11 @@ public class MeetingsFragment extends Fragment {
 
         meetingsArr.add(new OneMeeting("Launching...\nBe sure to set proper settings!"));
         recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         setAlarm(getContext());
     }

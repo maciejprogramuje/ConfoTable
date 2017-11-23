@@ -22,14 +22,12 @@
         android:id="@+id/save_settings_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="saveSettingsOnClick"
         android:text="Save settings" />
 
     <Button
         android:id="@+id/reset_settings_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="resetSettingsOnClick"
         android:text="Change launcher" />
 
 </LinearLayout>

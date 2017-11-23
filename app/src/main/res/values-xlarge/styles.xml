@@ -16,7 +16,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">16dp</item>
-        <item name="android:textSize">45sp</item>
+        <item name="android:textSize">34sp</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
 
@@ -25,13 +25,13 @@
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">3</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">112sp</item>
+        <item name="android:textSize">34sp</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
 
     <style name="images">
-        <item name="android:layout_width">45dp</item>
-        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_width">34dp</item>
+        <item name="android:layout_height">34dp</item>
     </style>
 
 </resources>

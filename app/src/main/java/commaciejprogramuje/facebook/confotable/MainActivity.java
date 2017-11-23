@@ -42,14 +42,11 @@ public class MainActivity extends AppCompatActivity {
     public static final int HALF_BRIGHT_LEVEL = 7;
     // ------------------------------------------------------------
     // ------------------------------------------------------------
-    public static final String INPUT_FILE_URL_KEY = "inputFileUrl";
     public static final String SHARED_PREF_KEY = "sharedPref";
 
     protected PowerManager.WakeLock mWakeLock;
-
-    private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
-    //private String inputFileUrl;
-    private String inputFileUrl = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
+    private String inputFileUrl;
+    //private String inputFileUrl = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,15 +63,9 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPref.contains(SHARED_PREF_KEY)) {
             inputFileUrl = sharedPref.getString(SHARED_PREF_KEY, "error");
             Log.w("UWAGA", "inputFileUrl from sharedPref: " + inputFileUrl);
+        } else {
+            Log.w("UWAGA", "NO inputFileUrl from sharedPref");
         }
-
-
-        /*sharedPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(SHARED_PREF_KEY, inputFileUrl);
-        editor.commit();
-        Log.w("UWAGA", "inputFileUrl from incomingIntent: " + inputFileUrl);*/
-
 
         Log.w("UWAGA", "start MainActivity");
 
@@ -92,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
+
         setSupportActionBar(toolbar);
 
         MeetingsFragment meetingsFragment = MeetingsFragment.newInstance(inputFileUrl);
@@ -177,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                                     Log.w("UWAGA", "usunięcie alarmu alarmu: " + alarmManager);
                                     alarmManager.cancel(pendingIntent);
 
-                                    SettingsFragment settingsFragment = SettingsFragment.newInstance(inputFileUrl);
+                                    SettingsFragment settingsFragment = SettingsFragment.newInstance();
                                     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                                     fragmentTransaction.replace(R.id.main_container, settingsFragment);
                                     fragmentTransaction.commitAllowingStateLoss();

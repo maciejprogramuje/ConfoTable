@@ -2,17 +2,21 @@ package commaciejprogramuje.facebook.confotable;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import static commaciejprogramuje.facebook.confotable.MainActivity.SHARED_PREF_KEY;
 
 
 public class SettingsFragment extends Fragment {
@@ -27,11 +31,8 @@ public class SettingsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static SettingsFragment newInstance(String param1) {
+    public static SettingsFragment newInstance() {
         SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-        args.putString(URL_TO_FILE_SETTINGS_KEY, param1);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -43,11 +44,6 @@ public class SettingsFragment extends Fragment {
         saveHiddenButton = view.findViewById(R.id.save_settings_button);
         resetHiddenButton = view.findViewById(R.id.reset_settings_button);
 
-        if (getArguments() != null) {
-            urlToFile = getArguments().getString(URL_TO_FILE_SETTINGS_KEY);
-            urlEditText.setText(urlToFile);
-        }
-
         return view;
     }
 
@@ -55,10 +51,24 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        if (sharedPref.contains(SHARED_PREF_KEY)) {
+            urlToFile = sharedPref.getString(SHARED_PREF_KEY, "error");
+            urlEditText.setText(urlToFile);
+            Log.w("UWAGA", "urlToFile from sharedPref in SettingsFragment: " + urlToFile);
+        }
+
         saveHiddenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 urlToFile = urlEditText.getText().toString();
+
+                SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(SHARED_PREF_KEY, urlToFile);
+                editor.commit();
+                Log.w("UWAGA", "zapisuję w SharedPreferences: " + urlToFile);
+
 
                 MeetingsFragment meetingsFragment = MeetingsFragment.newInstance(urlToFile);
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
