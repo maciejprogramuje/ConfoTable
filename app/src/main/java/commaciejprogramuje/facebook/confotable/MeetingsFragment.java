@@ -108,6 +108,8 @@ public class MeetingsFragment extends Fragment {
                 Utils.setScreenHalfBright(getActivity());
             }
 
+
+
             ParsePage refreshParsingPage = new ParsePage(new ParsePage.OnTaskCompletedListener() {
                 @Override
                 public void onTaskCompletedListener(ArrayList<OneMeeting> parsingResultArr) {
