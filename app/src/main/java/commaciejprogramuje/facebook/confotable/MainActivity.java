@@ -3,22 +3,18 @@ package commaciejprogramuje.facebook.confotable;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.StrictMode;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,7 +26,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     // ------------------------------------------------------------
@@ -50,12 +45,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String INPUT_FILE_URL_KEY = "inputFileUrl";
     public static final String SHARED_PREF_KEY = "sharedPref";
 
-    private RecyclerView recyclerView;
-    private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
-    private RefreshFileReciever refreshFileReciever;
     protected PowerManager.WakeLock mWakeLock;
-    private String inputFileUrl;
-    private boolean isRecentAppsButtonDisable;
+
+    private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
+    //private String inputFileUrl;
+    private String inputFileUrl = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-        isRecentAppsButtonDisable = true;
 
         Button hiddenButton = findViewById(R.id.change_launcher_button);
         hiddenButton.setBackgroundColor(Color.TRANSPARENT);
@@ -76,30 +68,15 @@ public class MainActivity extends AppCompatActivity {
             Log.w("UWAGA", "inputFileUrl from sharedPref: " + inputFileUrl);
         }
 
-        Intent incomingIntent = getIntent();
-        if (incomingIntent.hasExtra(SettingsActivity.URL_STRING_KEY)) {
-            inputFileUrl = incomingIntent.getStringExtra(SettingsActivity.URL_STRING_KEY);
 
-            sharedPref = getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString(SHARED_PREF_KEY, inputFileUrl);
-            editor.commit();
-            Log.w("UWAGA", "inputFileUrl from incomingIntent: " + inputFileUrl);
-        }
+        /*sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(SHARED_PREF_KEY, inputFileUrl);
+        editor.commit();
+        Log.w("UWAGA", "inputFileUrl from incomingIntent: " + inputFileUrl);*/
 
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        meetingsArr.add(new OneMeeting("Launching...\nBe sure to set proper settings!"));
-        recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
 
         Log.w("UWAGA", "start MainActivity");
-
-        // register refresh file RECEIVER
-        refreshFileReciever = new RefreshFileReciever();
-        IntentFilter filter2 = new IntentFilter("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
-        this.registerReceiver(refreshFileReciever, filter2);
 
         /* This code together with the one in onDestroy()
          * will make the screen be always on until this Activity gets destroyed. */
@@ -108,20 +85,19 @@ public class MainActivity extends AppCompatActivity {
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
 
-        if (inputFileUrl != null) {
-            disableStatusBar();
+        disableStatusBar();
 
-            // set screen full bright
-            Utils.setScreenFullBright(this);
+        // set screen full bright
+        Utils.setScreenFullBright(this);
 
-            Log.w("UWAGA", "summary: " + meetingsArr.get(0).getSummary());
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
+        setSupportActionBar(toolbar);
 
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
-            setSupportActionBar(toolbar);
-
-            setAlarm(this);
-        }
+        MeetingsFragment meetingsFragment = MeetingsFragment.newInstance(inputFileUrl);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_container, meetingsFragment);
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     private void disableStatusBar() {
@@ -139,15 +115,6 @@ public class MainActivity extends AppCompatActivity {
         localLayoutParams.format = PixelFormat.TRANSPARENT;
         CustomViewGroup view = new CustomViewGroup(this);
         manager.addView(view, localLayoutParams);
-    }
-
-    private static void setAlarm(Context context) {
-        Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * RESFRESH_TIME_MINUTES, pendingIntent);
-
-        Log.w("UWAGA", "wywołanie alarmu: " + alarmManager);
     }
 
     @Override
@@ -169,17 +136,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        if (isRecentAppsButtonDisable) {
-            // disable recent apps button
-            ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-            activityManager.moveTaskToFront(getTaskId(), 0);
-        }
+        // disable recent apps button
+        ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        activityManager.moveTaskToFront(getTaskId(), 0);
     }
 
     @Override
     protected void onDestroy() {
         this.mWakeLock.release();
-        unregisterReceiver(refreshFileReciever);
 
         super.onDestroy();
     }
@@ -201,10 +165,11 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+
+                                Log.w("UWAGA", "click");
+
                                 if (userInput.getText().toString().equals(ADMIN_CODE)) {
                                     Log.w("UWAGA", "nowe ustawienia");
-
-                                    isRecentAppsButtonDisable = false;
 
                                     Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
@@ -212,10 +177,10 @@ public class MainActivity extends AppCompatActivity {
                                     Log.w("UWAGA", "usunięcie alarmu alarmu: " + alarmManager);
                                     alarmManager.cancel(pendingIntent);
 
-                                    MainActivity.this.finish();
-                                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                                    intent.putExtra(INPUT_FILE_URL_KEY, inputFileUrl);
-                                    startActivity(intent);
+                                    SettingsFragment settingsFragment = SettingsFragment.newInstance(inputFileUrl);
+                                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.replace(R.id.main_container, settingsFragment);
+                                    fragmentTransaction.commitAllowingStateLoss();
                                 } else {
                                     Toast.makeText(context, "Access denied!", Toast.LENGTH_LONG).show();
                                 }
@@ -230,36 +195,5 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-    }
-
-    private class RefreshFileReciever extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Calendar calendar = Calendar.getInstance();
-            /*if (calendar.get(Calendar.HOUR_OF_DAY) > 19 && calendar.get(Calendar.HOUR_OF_DAY) < 7) {
-                Utils.setScreenHalfBright(MainActivity.this);
-            } else {
-                Utils.setScreenFullBright(MainActivity.this);
-            }*/
-
-            if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
-                Utils.setScreenFullBright(MainActivity.this);
-            } else if (calendar.get(Calendar.MINUTE) >= 15 && calendar.get(Calendar.MINUTE) < 30) {
-                Utils.setScreenHalfBright(MainActivity.this);
-            } else if (calendar.get(Calendar.MINUTE) >= 30 && calendar.get(Calendar.MINUTE) < 45) {
-                Utils.setScreenFullBright(MainActivity.this);
-            } else {
-                Utils.setScreenHalfBright(MainActivity.this);
-            }
-
-            ParsePage refreshParsingPage = new ParsePage(new ParsePage.OnTaskCompletedListener() {
-                @Override
-                public void onTaskCompletedListener(ArrayList<OneMeeting> parsingResultArr) {
-                    meetingsArr = parsingResultArr;
-                    recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
-                }
-            });
-            refreshParsingPage.execute(inputFileUrl);
-        }
     }
 }
