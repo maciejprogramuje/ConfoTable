@@ -98,15 +98,15 @@ public class MeetingsFragment extends Fragment {
                 Utils.setScreenFullBright(MainActivity.this);
             }*/
 
-            /*if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
-                Utils.setScreenFullBright(MainActivity.this);
+            if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
+                Utils.setScreenFullBright(getActivity());
             } else if (calendar.get(Calendar.MINUTE) >= 15 && calendar.get(Calendar.MINUTE) < 30) {
-                Utils.setScreenHalfBright(MainActivity.this);
+                Utils.setScreenHalfBright(getActivity());
             } else if (calendar.get(Calendar.MINUTE) >= 30 && calendar.get(Calendar.MINUTE) < 45) {
-                Utils.setScreenFullBright(MainActivity.this);
+                Utils.setScreenFullBright(getActivity());
             } else {
-                Utils.setScreenHalfBright(MainActivity.this);
-            }*/
+                Utils.setScreenHalfBright(getActivity());
+            }
 
             ParsePage refreshParsingPage = new ParsePage(new ParsePage.OnTaskCompletedListener() {
                 @Override
