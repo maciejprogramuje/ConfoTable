@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import static android.content.Context.ALARM_SERVICE;
 import static commaciejprogramuje.facebook.confotable.MainActivity.RESFRESH_TIME_MINUTES;
@@ -104,12 +105,16 @@ public class MeetingsFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Log.w("UWAGA", "wywołanie RefreshFileReciever");
 
-            Calendar calendar = Calendar.getInstance();
-            if (calendar.get(Calendar.HOUR_OF_DAY) > Integer.valueOf(endHour) && calendar.get(Calendar.HOUR_OF_DAY) < Integer.valueOf(startHour)) {
+            int endHourInt = Integer.valueOf(endHour);
+            int startHourInt = Integer.valueOf(startHour);
+            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+            if (calendar.get(Calendar.HOUR_OF_DAY) > startHourInt && calendar.get(Calendar.HOUR_OF_DAY) < endHourInt) {
                 Utils.setScreenHalfBright(getActivity());
             } else {
                 Utils.setScreenFullBright(getActivity());
             }
+
+            Log.w("UWAGA", "calHour="+calendar.get(Calendar.HOUR_OF_DAY)+", endStr="+endHour+", endInt="+endHourInt+", startStr="+startHour+", startIng="+startHourInt);
 
             /*if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
                 Utils.setScreenFullBright(getActivity());
