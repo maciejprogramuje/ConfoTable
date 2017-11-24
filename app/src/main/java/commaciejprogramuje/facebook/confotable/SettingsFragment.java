@@ -94,6 +94,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 urlToFile = urlEditText.getText().toString();
+                roomName = roomNameEditText.getText().toString();
 
                 SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
@@ -167,7 +168,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void showMeetingsFragment() {
-        MeetingsFragment meetingsFragment = MeetingsFragment.newInstance(urlToFile, startHour, endHour);
+        MeetingsFragment meetingsFragment = MeetingsFragment.newInstance(urlToFile, roomName, startHour, endHour);
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_container, meetingsFragment);
         fragmentTransaction.commitAllowingStateLoss();

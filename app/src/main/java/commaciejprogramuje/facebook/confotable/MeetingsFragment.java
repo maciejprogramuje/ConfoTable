@@ -27,6 +27,7 @@ import static commaciejprogramuje.facebook.confotable.MainActivity.RESFRESH_TIME
 
 public class MeetingsFragment extends Fragment {
     public static final String URL_TO_FILE_MEETINGS_KEY = "urlToFile";
+    public static final String ROOM_NAME_MEETINGS_KEY = "roomName";
     public static final String START_HOUR_MEETINGS_KEY = "startHour";
     public static final String END_HOUR_MEETINGS_KEY = "endHour";
     private RecyclerView recyclerView;
@@ -34,18 +35,19 @@ public class MeetingsFragment extends Fragment {
     private RefreshFileReciever refreshFileReciever;
 
     private String inputFileUrl;
+    private String roomName;
     private String startHour;
     private String endHour;
-
 
     public MeetingsFragment() {
         // Required empty public constructor
     }
 
-    public static MeetingsFragment newInstance(String param1, String param3, String param4) {
+    public static MeetingsFragment newInstance(String param1, String param2, String param3, String param4) {
         MeetingsFragment fragment = new MeetingsFragment();
         Bundle args = new Bundle();
         args.putString(URL_TO_FILE_MEETINGS_KEY, param1);
+        args.putString(ROOM_NAME_MEETINGS_KEY, param2);
         args.putString(START_HOUR_MEETINGS_KEY, param3);
         args.putString(END_HOUR_MEETINGS_KEY, param4);
         fragment.setArguments(args);
@@ -67,6 +69,7 @@ public class MeetingsFragment extends Fragment {
 
         if (getArguments() != null) {
             inputFileUrl = getArguments().getString(URL_TO_FILE_MEETINGS_KEY);
+            roomName = getArguments().getString(ROOM_NAME_MEETINGS_KEY);
             startHour = getArguments().getString(START_HOUR_MEETINGS_KEY);
             endHour = getArguments().getString(END_HOUR_MEETINGS_KEY);
         }
@@ -85,7 +88,7 @@ public class MeetingsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(roomName);
         setAlarm(getContext());
     }
 

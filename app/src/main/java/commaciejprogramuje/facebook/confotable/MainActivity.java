@@ -49,11 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected PowerManager.WakeLock mWakeLock;
 
-    private String inputFileUrl;
-    private String roomName;
-    private String startHour;
-    private String endHour;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
         hiddenButton.setBackgroundColor(Color.TRANSPARENT);
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        inputFileUrl = sharedPref.getString(SHARED_PREF_URL_TO_FILE_KEY, "https://");
-        roomName = sharedPref.getString(SHARED_PREF_ROOM_NAME_KEY, "Main Conference Room");
-        startHour = sharedPref.getString(SHARED_PREF_START_HOUR_KEY, "7");
-        endHour = sharedPref.getString(SHARED_PREF_END_HOUR_KEY, "20");
+        String inputFileUrl = sharedPref.getString(SHARED_PREF_URL_TO_FILE_KEY, "https://");
+        String roomName = sharedPref.getString(SHARED_PREF_ROOM_NAME_KEY, "Main Conference Room");
+        String startHour = sharedPref.getString(SHARED_PREF_START_HOUR_KEY, "7");
+        String endHour = sharedPref.getString(SHARED_PREF_END_HOUR_KEY, "20");
 
         Log.w("UWAGA", "start MainActivity, inputFileUrl from sharedPref: " + inputFileUrl);
 
@@ -87,10 +82,9 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Conference room: " + roomName);
-
         setSupportActionBar(toolbar);
 
-        MeetingsFragment meetingsFragment = MeetingsFragment.newInstance(inputFileUrl, startHour, endHour);
+        MeetingsFragment meetingsFragment = MeetingsFragment.newInstance(inputFileUrl, roomName, startHour, endHour);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_container, meetingsFragment);
         fragmentTransaction.commitAllowingStateLoss();
