@@ -5,21 +5,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
-import android.util.Log;
+import android.provider.Settings;
 import android.view.WindowManager;
-
-import java.util.Calendar;
 
 import static commaciejprogramuje.facebook.confotable.MainActivity.FULL_BRIGHT_LEVEL;
 import static commaciejprogramuje.facebook.confotable.MainActivity.HALF_BRIGHT_LEVEL;
 
-/**
- * Created by m.szymczyk on 2017-11-08.
- */
-
-public class Utils {
-    public static String[] splitDate(String tempDate) {
+class Utils {
+    static String[] splitDate(String tempDate) {
         String[] tempArr = new String[3];
         if (tempDate.length() > 0) {
             tempArr[0] = tempDate.substring(0, 4);
@@ -29,16 +22,7 @@ public class Utils {
         return tempArr;
     }
 
-    public static String splitTime(String tempTime) {
-        if (tempTime.length() > 0) {
-            String h = tempTime.substring(0, 2);
-            String mm = tempTime.substring(2, 4);
-            return h + ":" + mm;
-        }
-        return "";
-    }
-
-    public static void resetPreferredLauncherAndOpenChooser(Context context) {
+    static void resetPreferredLauncherAndOpenChooser(Context context) {
         PackageManager packageManager = context.getPackageManager();
         ComponentName componentName = new ComponentName(context, FakeLauncherActivity.class);
         packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
@@ -51,35 +35,17 @@ public class Utils {
         packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
     }
 
-    public static void setScreenFullBright(Activity activity) {
-        setBrightness(activity, FULL_BRIGHT_LEVEL);
+    static void setScreenFullBright(Activity activity) {
+        //setBrightness(activity, FULL_BRIGHT_LEVEL);
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // turn off sleep mode
     }
 
-    public static void setScreenHalfBright(Activity activity) {
-        setBrightness(activity, HALF_BRIGHT_LEVEL);
+    static void setScreenHalfBright(Activity activity) {
+        //setBrightness(activity, HALF_BRIGHT_LEVEL);
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // turn on sleep mode
     }
 
     private static void setBrightness(Activity activity, int brightness) {
-        if(Build.VERSION.SDK_INT >= 21) {
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-            params.screenBrightness = brightness / (float) 255;
-            activity.getWindow().setAttributes(params);
-        } else {
-            try {
-                android.provider.Settings.System.putInt(
-                        activity.getContentResolver(),
-                        android.provider.Settings.System.SCREEN_BRIGHTNESS, brightness);
-                android.provider.Settings.System.putInt(activity.getContentResolver(),
-                        android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE,
-                        android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-                android.provider.Settings.System.putInt(
-                        activity.getContentResolver(),
-                        android.provider.Settings.System.SCREEN_BRIGHTNESS,
-                        brightness);
-            } catch (Exception e) {
-                Log.e("Screen Brightness", "error changing screen brightness");
-            }
-        }
+        Settings.System.putInt(activity.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightness);
     }
 }

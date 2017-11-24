@@ -1,7 +1,6 @@
 package commaciejprogramuje.facebook.confotable;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.io.Serializable;
 

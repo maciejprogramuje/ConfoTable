@@ -27,19 +27,28 @@ import static commaciejprogramuje.facebook.confotable.MainActivity.RESFRESH_TIME
 
 public class MeetingsFragment extends Fragment {
     public static final String URL_TO_FILE_MEETINGS_KEY = "urlToFile";
+    public static final String ROOM_NAME_MEETINGS_KEY = "roomName";
+    public static final String START_HOUR_MEETINGS_KEY = "startHour";
+    public static final String END_HOUR_MEETINGS_KEY = "endHour";
     private RecyclerView recyclerView;
     private ArrayList<OneMeeting> meetingsArr = new ArrayList<>();
     private RefreshFileReciever refreshFileReciever;
+
     private String inputFileUrl;
+    private String startHour;
+    private String endHour;
+
 
     public MeetingsFragment() {
         // Required empty public constructor
     }
 
-    public static MeetingsFragment newInstance(String param1) {
+    public static MeetingsFragment newInstance(String param1, String param3, String param4) {
         MeetingsFragment fragment = new MeetingsFragment();
         Bundle args = new Bundle();
         args.putString(URL_TO_FILE_MEETINGS_KEY, param1);
+        args.putString(START_HOUR_MEETINGS_KEY, param3);
+        args.putString(END_HOUR_MEETINGS_KEY, param4);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,6 +68,8 @@ public class MeetingsFragment extends Fragment {
 
         if (getArguments() != null) {
             inputFileUrl = getArguments().getString(URL_TO_FILE_MEETINGS_KEY);
+            startHour = getArguments().getString(START_HOUR_MEETINGS_KEY);
+            endHour = getArguments().getString(END_HOUR_MEETINGS_KEY);
         }
 
         return view;
@@ -92,13 +103,13 @@ public class MeetingsFragment extends Fragment {
             Log.w("UWAGA", "wywołanie RefreshFileReciever");
 
             Calendar calendar = Calendar.getInstance();
-            /*if (calendar.get(Calendar.HOUR_OF_DAY) > 19 && calendar.get(Calendar.HOUR_OF_DAY) < 7) {
-                Utils.setScreenHalfBright(MainActivity.this);
+            if (calendar.get(Calendar.HOUR_OF_DAY) > Integer.valueOf(endHour) && calendar.get(Calendar.HOUR_OF_DAY) < Integer.valueOf(startHour)) {
+                Utils.setScreenHalfBright(getActivity());
             } else {
-                Utils.setScreenFullBright(MainActivity.this);
-            }*/
+                Utils.setScreenFullBright(getActivity());
+            }
 
-            if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
+            /*if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
                 Utils.setScreenFullBright(getActivity());
             } else if (calendar.get(Calendar.MINUTE) >= 15 && calendar.get(Calendar.MINUTE) < 30) {
                 Utils.setScreenHalfBright(getActivity());
@@ -106,8 +117,7 @@ public class MeetingsFragment extends Fragment {
                 Utils.setScreenFullBright(getActivity());
             } else {
                 Utils.setScreenHalfBright(getActivity());
-            }
-
+            }*/
 
 
             ParsePage refreshParsingPage = new ParsePage(new ParsePage.OnTaskCompletedListener() {

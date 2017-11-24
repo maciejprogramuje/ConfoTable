@@ -1,35 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:orientation="vertical"
-    tools:context="commaciejprogramuje.facebook.confotable.SettingsFragment">
+    android:layout_height="match_parent">
 
-    <TextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:text="Enter full url/path used for ics calendar file:" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        tools:context="commaciejprogramuje.facebook.confotable.SettingsFragment">
 
-    <EditText
-        android:id="@+id/url_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="https://" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:text="Enter full url/path used for ics calendar file:"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/save_settings_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save settings" />
+        <EditText
+            android:id="@+id/url_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="https://"/>
 
-    <Button
-        android:id="@+id/reset_settings_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change launcher" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#fff" />
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter conference room name:"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/room_name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="room name" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#fff" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter low screen brightness hours:"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="Start hour: " />
+
+            <Button
+                android:id="@+id/start_hour_subtract"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:drawableLeft="@drawable/ic_arrow_back" />
+
+            <TextView
+                android:id="@+id/start_hour_text_view"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="7" />
+
+            <Button
+                android:id="@+id/start_hour_add"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:drawableLeft="@drawable/ic_arrow_forward" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="End hour:" />
+
+            <Button
+                android:id="@+id/end_hour_subtract"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:drawableLeft="@drawable/ic_arrow_back" />
+
+            <TextView
+                android:id="@+id/end_hour_text_view"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="20" />
+
+            <Button
+                android:id="@+id/end_hour_add"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:drawableLeft="@drawable/ic_arrow_forward" />
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#fff" />
+
+        <Button
+            android:id="@+id/reset_settings_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change launcher" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/save_settings_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Save and exit" />
+
+            <Button
+                android:id="@+id/not_save_settings_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Don't save and exit" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+

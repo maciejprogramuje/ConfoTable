@@ -25,8 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
     // ------------------------------------------------------------
     // ------------------------------------------------------------
@@ -42,11 +40,19 @@ public class MainActivity extends AppCompatActivity {
     public static final int HALF_BRIGHT_LEVEL = 7;
     // ------------------------------------------------------------
     // ------------------------------------------------------------
-    public static final String SHARED_PREF_KEY = "sharedPref";
+    // "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/"
+    // ------------------------------------------------------------
+    public static final String SHARED_PREF_URL_TO_FILE_KEY = "sharedPrefUrlToFile";
+    public static final String SHARED_PREF_ROOM_NAME_KEY = "sharedPrefRoomName";
+    public static final String SHARED_PREF_START_HOUR_KEY = "sharedPrefStartHour";
+    public static final String SHARED_PREF_END_HOUR_KEY = "sharedPrefEndHour";
 
     protected PowerManager.WakeLock mWakeLock;
+
     private String inputFileUrl;
-    //private String inputFileUrl = "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
+    private String roomName;
+    private String startHour;
+    private String endHour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,17 +66,18 @@ public class MainActivity extends AppCompatActivity {
         hiddenButton.setBackgroundColor(Color.TRANSPARENT);
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        if (sharedPref.contains(SHARED_PREF_KEY)) {
-            inputFileUrl = sharedPref.getString(SHARED_PREF_KEY, "error");
-            Log.w("UWAGA", "inputFileUrl from sharedPref: " + inputFileUrl);
-        } else {
-            Log.w("UWAGA", "NO inputFileUrl from sharedPref");
-        }
+        inputFileUrl = sharedPref.getString(SHARED_PREF_URL_TO_FILE_KEY, "https://");
+        roomName = sharedPref.getString(SHARED_PREF_ROOM_NAME_KEY, "Main Conference Room");
+        startHour = sharedPref.getString(SHARED_PREF_START_HOUR_KEY, "7");
+        endHour = sharedPref.getString(SHARED_PREF_END_HOUR_KEY, "20");
 
-        Log.w("UWAGA", "start MainActivity");
+        Log.w("UWAGA", "start MainActivity, inputFileUrl from sharedPref: " + inputFileUrl);
 
-        /* This code together with the one in onDestroy()
-         * will make the screen be always on until this Activity gets destroyed. */
+        // Disable sleep mode
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // turn off sleep mode
+        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // turn on sleep mode
+
+        // This code together with the one in onDestroy() Will make the screen be always on until this Activity gets destroyed.
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         assert pm != null;
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
@@ -78,15 +85,12 @@ public class MainActivity extends AppCompatActivity {
 
         disableStatusBar();
 
-        // set screen full bright
-        Utils.setScreenFullBright(this);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Conference room: " + CONFERENCE_ROOM);
+        toolbar.setTitle("Conference room: " + roomName);
 
         setSupportActionBar(toolbar);
 
-        MeetingsFragment meetingsFragment = MeetingsFragment.newInstance(inputFileUrl);
+        MeetingsFragment meetingsFragment = MeetingsFragment.newInstance(inputFileUrl, startHour, endHour);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_container, meetingsFragment);
         fragmentTransaction.commitAllowingStateLoss();

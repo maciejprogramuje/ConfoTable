@@ -18,21 +18,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
-
-/**
- * Created by m.szymczyk on 2017-11-08.
- */
-
 public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
-    public static final String WRONG_URL_MESSAGE = "Wrong url/path for ics calendar file\nor\nno internet connection!";
-    public OnTaskCompletedListener listener = null;
+    private OnTaskCompletedListener listener = null;
 
-    public ParsePage(OnTaskCompletedListener listener) {
+    ParsePage(OnTaskCompletedListener listener) {
         this.listener = listener;
     }
 
     @Override
     protected ArrayList<OneMeeting> doInBackground(String... strings) {
+        final String wrongUrlMessage = "Wrong ics calendar url\nor\nno internet connection!";
+
         //https://github.com/ical4j/ical4j/wiki/Examples
         Log.w("UWAGA", "parsuję...");
 
@@ -53,11 +49,11 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
             period = new Period(new DateTime(today.getTime()), new DateTime(monthAfterToday.getTime()));
         } catch (IOException e) {
             Log.w("UWAGA", "MyErr 1");
-            tempArr.add(new OneMeeting(WRONG_URL_MESSAGE));
+            tempArr.add(new OneMeeting(wrongUrlMessage));
             return tempArr;
         } catch (ParserException e) {
             Log.w("UWAGA", "MyErr 2");
-            tempArr.add(new OneMeeting(WRONG_URL_MESSAGE));
+            tempArr.add(new OneMeeting(wrongUrlMessage));
             return tempArr;
         }
 
