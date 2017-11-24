@@ -27,7 +27,6 @@ import static commaciejprogramuje.facebook.confotable.MainActivity.RESFRESH_TIME
 
 public class MeetingsFragment extends Fragment {
     public static final String URL_TO_FILE_MEETINGS_KEY = "urlToFile";
-    public static final String ROOM_NAME_MEETINGS_KEY = "roomName";
     public static final String START_HOUR_MEETINGS_KEY = "startHour";
     public static final String END_HOUR_MEETINGS_KEY = "endHour";
     private RecyclerView recyclerView;
