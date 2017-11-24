@@ -88,7 +88,7 @@ public class MeetingsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(roomName);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Boardroom: " + roomName);
         setAlarm(getContext());
     }
 
