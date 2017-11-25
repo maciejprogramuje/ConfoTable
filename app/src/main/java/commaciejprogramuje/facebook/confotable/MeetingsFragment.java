@@ -18,6 +18,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.fortuna.ical4j.model.DateTime;
+
+import java.text.ParseException;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -107,25 +111,22 @@ public class MeetingsFragment extends Fragment {
 
             int endHourInt = Integer.valueOf(endHour);
             int startHourInt = Integer.valueOf(startHour);
-            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-            if (calendar.get(Calendar.HOUR_OF_DAY) > startHourInt && calendar.get(Calendar.HOUR_OF_DAY) < endHourInt) {
-                Utils.setScreenHalfBright(getActivity());
+
+            Calendar calendar = Calendar.getInstance();
+
+            if(startHourInt >= endHourInt) {
+                if (calendar.get(Calendar.HOUR_OF_DAY) >= startHourInt || calendar.get(Calendar.HOUR_OF_DAY) < endHourInt) {
+                    Utils.setScreenHalfBright(getActivity());
+                } else {
+                    Utils.setScreenFullBright(getActivity());
+                }
             } else {
-                Utils.setScreenFullBright(getActivity());
+                if (calendar.get(Calendar.HOUR_OF_DAY) >= startHourInt && calendar.get(Calendar.HOUR_OF_DAY) < endHourInt) {
+                    Utils.setScreenHalfBright(getActivity());
+                } else {
+                    Utils.setScreenFullBright(getActivity());
+                }
             }
-
-            Log.w("UWAGA", "calHour="+calendar.get(Calendar.HOUR_OF_DAY)+", endStr="+endHour+", endInt="+endHourInt+", startStr="+startHour+", startIng="+startHourInt);
-
-            /*if (calendar.get(Calendar.MINUTE) >= 0 && calendar.get(Calendar.MINUTE) < 15) {
-                Utils.setScreenFullBright(getActivity());
-            } else if (calendar.get(Calendar.MINUTE) >= 15 && calendar.get(Calendar.MINUTE) < 30) {
-                Utils.setScreenHalfBright(getActivity());
-            } else if (calendar.get(Calendar.MINUTE) >= 30 && calendar.get(Calendar.MINUTE) < 45) {
-                Utils.setScreenFullBright(getActivity());
-            } else {
-                Utils.setScreenHalfBright(getActivity());
-            }*/
-
 
             ParsePage refreshParsingPage = new ParsePage(new ParsePage.OnTaskCompletedListener() {
                 @Override

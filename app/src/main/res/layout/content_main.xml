@@ -9,10 +9,10 @@
 
     <Button
         android:id="@+id/change_launcher_button"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="40dp"
         android:layout_gravity="bottom|left"
         android:onClick="hiddenButtonOnClick"
-        android:text="kod: 0000" />
+        android:text="" />
 
 </FrameLayout>
