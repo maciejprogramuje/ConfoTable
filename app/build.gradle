@@ -1,10 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "commaciejprogramuje.facebook.confotable"
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -19,6 +21,7 @@ android {
     }
     productFlavors {
     }
+    buildToolsVersion '27.0.1'
 }
 
 dependencies {
@@ -35,8 +38,8 @@ dependencies {
     implementation 'com.android.support:support-v4:27.0.1'
     compile 'org.mnode.ical4j:ical4j:1.0.5'
     compile 'backport-util-concurrent:backport-util-concurrent:3.1'
-    compile 'commons-codec:commons-codec:1.8'
+    compile 'commons-codec:commons-codec:1.9'
     compile 'commons-lang:commons-lang:2.6'
-    annotationProcessor 'com.jakewharton:butterknife:5.1.1'
-    implementation 'com.jakewharton:butterknife:5.1.1'
+    annotationProcessor 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.jakewharton:butterknife:8.8.1'
 }

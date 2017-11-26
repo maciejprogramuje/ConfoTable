@@ -15,9 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static commaciejprogramuje.facebook.confotable.MainActivity.SHARED_PREF_END_HOUR_KEY;
 import static commaciejprogramuje.facebook.confotable.MainActivity.SHARED_PREF_ROOM_NAME_KEY;
@@ -26,30 +27,29 @@ import static commaciejprogramuje.facebook.confotable.MainActivity.SHARED_PREF_U
 
 
 public class SettingsFragment extends Fragment {
-
-
-    @InjectView(R.id.url_edit_text)
+    @BindView(R.id.url_edit_text)
     EditText urlEditText;
-    @InjectView(R.id.room_name_edit_text)
+    @BindView(R.id.room_name_edit_text)
     EditText roomNameEditText;
-    @InjectView(R.id.start_hour_subtract)
+    @BindView(R.id.start_hour_subtract)
     Button startHourSubtract;
-    @InjectView(R.id.start_hour_text_view)
+    @BindView(R.id.start_hour_text_view)
     TextView startHourTextView;
-    @InjectView(R.id.start_hour_add)
+    @BindView(R.id.start_hour_add)
     Button startHourAdd;
-    @InjectView(R.id.end_hour_subtract)
+    @BindView(R.id.end_hour_subtract)
     Button endHourSubtract;
-    @InjectView(R.id.end_hour_text_view)
+    @BindView(R.id.end_hour_text_view)
     TextView endHourTextView;
-    @InjectView(R.id.end_hour_add)
+    @BindView(R.id.end_hour_add)
     Button endHourAdd;
-    @InjectView(R.id.reset_settings_button)
+    @BindView(R.id.reset_settings_button)
     Button resetSettingsButton;
-    @InjectView(R.id.save_settings_button)
+    @BindView(R.id.save_settings_button)
     Button saveSettingsButton;
-    @InjectView(R.id.not_save_settings_button)
+    @BindView(R.id.not_save_settings_button)
     Button notSaveSettingsButton;
+    Unbinder unbinder;
 
     private String urlToFile;
     private String roomName;
@@ -68,7 +68,7 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
-        ButterKnife.inject(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -176,7 +176,7 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.reset(this);
+        unbinder.unbind();
     }
 
     @OnClick({R.id.url_edit_text, R.id.room_name_edit_text, R.id.start_hour_subtract, R.id.start_hour_text_view, R.id.start_hour_add, R.id.end_hour_subtract, R.id.end_hour_text_view, R.id.end_hour_add, R.id.reset_settings_button, R.id.save_settings_button, R.id.not_save_settings_button})
