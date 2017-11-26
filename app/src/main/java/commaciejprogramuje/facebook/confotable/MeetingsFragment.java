@@ -136,7 +136,7 @@ public class MeetingsFragment extends Fragment {
 
     private static void setAlarm(Context context) {
         Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MeetingsFragment$RefreshFileReciever");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         assert alarmManager != null;
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * RESFRESH_TIME_MINUTES, pendingIntent);

@@ -171,14 +171,13 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-
                                 Log.w("UWAGA", "click");
 
                                 if (userInput.getText().toString().equals(ADMIN_CODE)) {
                                     Log.w("UWAGA", "nowe ustawienia");
 
                                     Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
-                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
+                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                                     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                                     Log.w("UWAGA", "usunięcie alarmu alarmu: " + alarmManager);
                                     assert alarmManager != null;
