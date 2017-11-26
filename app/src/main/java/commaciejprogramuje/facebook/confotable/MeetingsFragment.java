@@ -18,13 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.fortuna.ical4j.model.DateTime;
-
-import java.text.ParseException;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import static android.content.Context.ALARM_SERVICE;
 import static commaciejprogramuje.facebook.confotable.MainActivity.RESFRESH_TIME_MINUTES;
@@ -60,7 +55,7 @@ public class MeetingsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_meetings, container, false);
 
         // register refresh file RECEIVER
@@ -143,6 +138,7 @@ public class MeetingsFragment extends Fragment {
         Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MeetingsFragment$RefreshFileReciever");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        assert alarmManager != null;
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * RESFRESH_TIME_MINUTES, pendingIntent);
 
         Log.w("UWAGA", "wywołanie alarmu: " + alarmManager);

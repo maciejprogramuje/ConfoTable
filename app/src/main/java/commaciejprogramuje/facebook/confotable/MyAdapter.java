@@ -7,15 +7,11 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-/**
- * Created by m.szymczyk on 2017-11-09.
- */
-
 class MyAdapter extends RecyclerView.Adapter {
     private RecyclerView recyclerView;
-    ArrayList<OneMeeting> meetings;
+    private ArrayList<OneMeeting> meetings;
 
-    public MyAdapter(ArrayList<OneMeeting> meetings, RecyclerView recyclerView) {
+    MyAdapter(ArrayList<OneMeeting> meetings, RecyclerView recyclerView) {
         this.meetings = meetings;
         this.recyclerView = recyclerView;
     }

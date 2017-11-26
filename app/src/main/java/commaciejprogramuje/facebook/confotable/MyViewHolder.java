@@ -4,18 +4,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-/**
- * Created by m.szymczyk on 2017-11-09.
- */
+class MyViewHolder extends RecyclerView.ViewHolder {
+    TextView summaryTV;
+    TextView dtStartTv;
+    TextView dtEndTv;
+    TextView timeStartTv;
+    TextView timeEndTv;
 
-public class MyViewHolder extends RecyclerView.ViewHolder {
-    public TextView summaryTV;
-    public TextView dtStartTv;
-    public TextView dtEndTv;
-    public TextView timeStartTv;
-    public TextView timeEndTv;
-
-    public MyViewHolder(View itemView) {
+    MyViewHolder(View itemView) {
         super(itemView);
         summaryTV = itemView.findViewById(R.id.meeting_summary);
         dtStartTv = itemView.findViewById(R.id.meeting_dt_start);

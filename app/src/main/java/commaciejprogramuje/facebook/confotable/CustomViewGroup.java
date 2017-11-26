@@ -5,10 +5,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 
-/**
- * Created by m.szymczyk on 2017-11-16.
- */
-
 public class CustomViewGroup extends ViewGroup {
 
     public CustomViewGroup(Context context) {

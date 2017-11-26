@@ -4,9 +4,6 @@ import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
-/**
- * Created by m.szymczyk on 2017-11-08.
- */
 
 public class OneMeeting implements Comparable<OneMeeting>, Serializable {
     private String summary;
@@ -22,14 +19,14 @@ public class OneMeeting implements Comparable<OneMeeting>, Serializable {
     private String onlyStartTime;
     private String onlyEndTime;
 
-    public OneMeeting(String message) {
+    OneMeeting(String message) {
         summary = message;
         startTime = "";
         endTime = "";
         reservationDate = "";
     }
 
-    public OneMeeting(String summary, String startDate, String endDate, String reservationDate) {
+    OneMeeting(String summary, String startDate, String endDate, String reservationDate) {
         this.summary = summary;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -78,7 +75,7 @@ public class OneMeeting implements Comparable<OneMeeting>, Serializable {
         this.reservationDate = reservationDate;
     }
 
-    public String getSummary() {
+    String getSummary() {
         return summary;
     }
 
@@ -134,7 +131,7 @@ public class OneMeeting implements Comparable<OneMeeting>, Serializable {
         this.endDate = endDate;
     }
 
-    public String getOnlyStartDate() {
+    String getOnlyStartDate() {
         return onlyStartDate;
     }
 
@@ -142,7 +139,7 @@ public class OneMeeting implements Comparable<OneMeeting>, Serializable {
         this.onlyStartDate = onlyStartDate;
     }
 
-    public String getOnlyEndDate() {
+    String getOnlyEndDate() {
         return onlyEndDate;
     }
 
@@ -150,7 +147,7 @@ public class OneMeeting implements Comparable<OneMeeting>, Serializable {
         this.onlyEndDate = onlyEndDate;
     }
 
-    public String getOnlyStartTime() {
+    String getOnlyStartTime() {
         return onlyStartTime;
     }
 
@@ -158,7 +155,7 @@ public class OneMeeting implements Comparable<OneMeeting>, Serializable {
         this.onlyStartTime = onlyStartTime;
     }
 
-    public String getOnlyEndTime() {
+    String getOnlyEndTime() {
         return onlyEndTime;
     }
 

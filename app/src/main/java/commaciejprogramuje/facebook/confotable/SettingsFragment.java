@@ -61,12 +61,11 @@ public class SettingsFragment extends Fragment {
     }
 
     public static SettingsFragment newInstance() {
-        SettingsFragment fragment = new SettingsFragment();
-        return fragment;
+        return new SettingsFragment();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.inject(this, view);

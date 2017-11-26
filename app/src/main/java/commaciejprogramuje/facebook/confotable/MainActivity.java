@@ -1,5 +1,6 @@
 package commaciejprogramuje.facebook.confotable;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -32,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
     // --------------------*** user options ***--------------------
     // ------------------------------------------------------------
     // ------------------------------------------------------------
-    public static final String CONFERENCE_ROOM = "AKWARIUM";
-    // "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/";
     public static final long RESFRESH_TIME_MINUTES = 2;
     public static final String ADMIN_CODE = "0000";
     // ----------------------- from 0 to 255 ----------------------
@@ -50,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected PowerManager.WakeLock mWakeLock;
 
+    @SuppressLint("WakelockTimeout")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         disableStatusBar();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Conference room: " + roomName);
         setSupportActionBar(toolbar);
 
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         localLayoutParams.height = (int) (50 * getResources().getDisplayMetrics().scaledDensity);
         localLayoutParams.format = PixelFormat.TRANSPARENT;
         CustomViewGroup view = new CustomViewGroup(this);
+        assert manager != null;
         manager.addView(view, localLayoutParams);
     }
 
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
         // disable recent apps button
         ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        assert activityManager != null;
         activityManager.moveTaskToFront(getTaskId(), 0);
     }
 
@@ -157,11 +159,11 @@ public class MainActivity extends AppCompatActivity {
 
         // get prompts.xml view
         LayoutInflater li = LayoutInflater.from(context);
-        View promptsView = li.inflate(R.layout.admin_code, null);
+        @SuppressLint("InflateParams") View promptsView = li.inflate(R.layout.admin_code, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(promptsView);
 
-        final EditText userInput = (EditText) promptsView.findViewById(R.id.code_input_edit_text);
+        final EditText userInput = promptsView.findViewById(R.id.code_input_edit_text);
 
         // set dialog message
         alertDialogBuilder
@@ -179,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, 0);
                                     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                                     Log.w("UWAGA", "usunięcie alarmu alarmu: " + alarmManager);
+                                    assert alarmManager != null;
                                     alarmManager.cancel(pendingIntent);
 
                                     SettingsFragment settingsFragment = SettingsFragment.newInstance();

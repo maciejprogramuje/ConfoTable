@@ -8,9 +8,6 @@ import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.view.WindowManager;
 
-import static commaciejprogramuje.facebook.confotable.MainActivity.FULL_BRIGHT_LEVEL;
-import static commaciejprogramuje.facebook.confotable.MainActivity.HALF_BRIGHT_LEVEL;
-
 class Utils {
     static String[] splitDate(String tempDate) {
         String[] tempArr = new String[3];
