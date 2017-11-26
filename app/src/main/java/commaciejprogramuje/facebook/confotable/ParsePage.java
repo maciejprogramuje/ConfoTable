@@ -38,11 +38,11 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
         Calendar monthAfterToday = Calendar.getInstance();
         monthAfterToday.add(Calendar.MONTH, 1);
 
-        Period period = null;
-        net.fortuna.ical4j.model.Calendar cal = null;
-        String tSummary = "";
-        String tStartDate = "";
-        String tEndDate = "";
+        Period period;
+        net.fortuna.ical4j.model.Calendar cal;
+        String tSummary;
+        String tStartDate;
+        String tEndDate;
         try {
             InputStream is = new URL(strings[0]).openStream();
             cal = new CalendarBuilder().build(is);
