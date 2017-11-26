@@ -29,8 +29,10 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
     protected ArrayList<OneMeeting> doInBackground(String... strings) {
         final String wrongUrlMessage = "Wrong ics calendar url\nor\nno internet connection!";
 
+        MainActivity.isParsingComplette = false;
+
         //https://github.com/ical4j/ical4j/wiki/Examples
-        Log.w("UWAGA", "parsuję...");
+        Log.w("UWAGA", "ParsePage doInBackground...");
 
         ArrayList<OneMeeting> tempArr = new ArrayList<>();
 
@@ -38,11 +40,11 @@ public class ParsePage extends AsyncTask<String, Void, ArrayList<OneMeeting>> {
         Calendar monthAfterToday = Calendar.getInstance();
         monthAfterToday.add(Calendar.MONTH, 1);
 
-        Period period;
+        Period period = null;
         net.fortuna.ical4j.model.Calendar cal;
-        String tSummary;
-        String tStartDate;
-        String tEndDate;
+        String tSummary = "";
+        String tStartDate = "";
+        String tEndDate = "";
         try {
             InputStream is = new URL(strings[0]).openStream();
             cal = new CalendarBuilder().build(is);

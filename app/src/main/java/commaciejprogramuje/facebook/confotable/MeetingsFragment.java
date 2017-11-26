@@ -109,7 +109,7 @@ public class MeetingsFragment extends Fragment {
 
             Calendar calendar = Calendar.getInstance();
 
-            if(startHourInt >= endHourInt) {
+            if (startHourInt >= endHourInt) {
                 if (calendar.get(Calendar.HOUR_OF_DAY) >= startHourInt || calendar.get(Calendar.HOUR_OF_DAY) < endHourInt) {
                     Utils.setScreenHalfBright(getActivity());
                 } else {
@@ -126,11 +126,17 @@ public class MeetingsFragment extends Fragment {
             ParsePage refreshParsingPage = new ParsePage(new ParsePage.OnTaskCompletedListener() {
                 @Override
                 public void onTaskCompletedListener(ArrayList<OneMeeting> parsingResultArr) {
+                    MainActivity.isParsingComplette = true;
                     meetingsArr = parsingResultArr;
                     recyclerView.setAdapter(new MyAdapter(meetingsArr, recyclerView));
                 }
             });
-            refreshParsingPage.execute(inputFileUrl);
+            if(MainActivity.isParsingComplette) {
+                Log.w("UWAGA", "MeetingFrag -> ParsePage execute!");
+                refreshParsingPage.execute(inputFileUrl);
+            } else {
+                Log.w("UWAGA", "MeetingFrag -> ParsePage NOT execute!");
+            }
         }
     }
 

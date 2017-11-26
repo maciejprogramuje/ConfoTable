@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREF_ROOM_NAME_KEY = "sharedPrefRoomName";
     public static final String SHARED_PREF_START_HOUR_KEY = "sharedPrefStartHour";
     public static final String SHARED_PREF_END_HOUR_KEY = "sharedPrefEndHour";
+    public static boolean isParsingComplette = true;
 
     protected PowerManager.WakeLock mWakeLock;
 
@@ -177,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                                     Log.w("UWAGA", "nowe ustawienia");
 
                                     Intent alarmIntent = new Intent("commaciejprogramuje.facebook.confotable.MainActivity$RefreshFileReciever");
+
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 111, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                                     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                                     Log.w("UWAGA", "usunięcie alarmu alarmu: " + alarmManager);
