@@ -76,8 +76,8 @@ public class SettingsFragment extends Fragment {
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         urlToFile = sharedPref.getString(SHARED_PREF_URL_TO_FILE_KEY, "https://");
         roomName = sharedPref.getString(SHARED_PREF_ROOM_NAME_KEY, "Main Conference Room");
-        startHour = sharedPref.getString(SHARED_PREF_START_HOUR_KEY, "7");
-        endHour = sharedPref.getString(SHARED_PREF_END_HOUR_KEY, "20");
+        startHour = sharedPref.getString(SHARED_PREF_START_HOUR_KEY, "20");
+        endHour = sharedPref.getString(SHARED_PREF_END_HOUR_KEY, "7");
 
         urlEditText.setText(urlToFile);
         roomNameEditText.setText(roomName);

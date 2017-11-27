@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         String inputFileUrl = sharedPref.getString(SHARED_PREF_URL_TO_FILE_KEY, "https://");
         String roomName = sharedPref.getString(SHARED_PREF_ROOM_NAME_KEY, "Main Conference Room");
-        String startHour = sharedPref.getString(SHARED_PREF_START_HOUR_KEY, "7");
-        String endHour = sharedPref.getString(SHARED_PREF_END_HOUR_KEY, "20");
+        String startHour = sharedPref.getString(SHARED_PREF_START_HOUR_KEY, "20");
+        String endHour = sharedPref.getString(SHARED_PREF_END_HOUR_KEY, "7");
 
         Log.w("UWAGA", "start MainActivity, inputFileUrl from sharedPref: " + inputFileUrl);
 
