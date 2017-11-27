@@ -35,12 +35,7 @@ public class MainActivity extends AppCompatActivity {
     // ------------------------------------------------------------
     public static final long RESFRESH_TIME_MINUTES = 2;
     public static final String ADMIN_CODE = "0000";
-    // ----------------------- from 0 to 255 ----------------------
-    public static final int FULL_BRIGHT_LEVEL = 180;
-    public static final int HALF_BRIGHT_LEVEL = 7;
     // ------------------------------------------------------------
-    // ------------------------------------------------------------
-    // "https://poczta.pb.pl/home/sala_akwarium@pb.pl/Calendar/"
     // ------------------------------------------------------------
     public static final String SHARED_PREF_URL_TO_FILE_KEY = "sharedPrefUrlToFile";
     public static final String SHARED_PREF_ROOM_NAME_KEY = "sharedPrefRoomName";
