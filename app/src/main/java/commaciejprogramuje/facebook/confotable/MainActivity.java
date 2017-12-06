@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
 
-        disableStatusBar();
+        Utils.disableStatusBar(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Conference room: " + roomName);
@@ -85,24 +85,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_container, meetingsFragment);
         fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    private void disableStatusBar() {
-        WindowManager manager = ((WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE));
-        WindowManager.LayoutParams localLayoutParams = new WindowManager.LayoutParams();
-        localLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
-        localLayoutParams.gravity = Gravity.TOP;
-        localLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
-                // this is to enable the notification to recieve touch events
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
-                // Draws over status bar
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
-        localLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-        localLayoutParams.height = (int) (50 * getResources().getDisplayMetrics().scaledDensity);
-        localLayoutParams.format = PixelFormat.TRANSPARENT;
-        CustomViewGroup view = new CustomViewGroup(this);
-        assert manager != null;
-        manager.addView(view, localLayoutParams);
     }
 
     @Override
