@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     private void disableStatusBar() {
         WindowManager manager = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
         WindowManager.LayoutParams localLayoutParams = new WindowManager.LayoutParams();
-        localLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        localLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
         localLayoutParams.gravity = Gravity.TOP;
         localLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 // this is to enable the notification to recieve touch events
