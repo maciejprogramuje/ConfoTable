@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.StrictMode;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREF_START_HOUR_KEY = "sharedPrefStartHour";
     public static final String SHARED_PREF_END_HOUR_KEY = "sharedPrefEndHour";
     public static boolean isParsingComplette = true;
+    public final static int REQUEST_CODE = 66;
 
     protected PowerManager.WakeLock mWakeLock;
 
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         if (android.os.Build.VERSION.SDK_INT >= 23) {
             if(!Settings.canDrawOverlays(MainActivity.this)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         } else {
             disableStatusBar();
@@ -100,6 +102,19 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_container, meetingsFragment);
         fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
+        if (requestCode == REQUEST_CODE) {
+            // ** if so check once again if we have permission */
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.canDrawOverlays(this)) {
+                    // continue here - permission was granted
+                    disableStatusBar();
+                }
+            }
+        }
     }
 
     private void disableStatusBar() {
